@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TaskLogEvent;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
@@ -14,7 +15,6 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = TaskResource::collection(Auth::user()->pic_tasks()->get());
         $task_statuses = TaskStatus::get();
 
         return Inertia::render('Tasks.Index', [

@@ -13,7 +13,7 @@
               <hr class="mt-1 mb-2" />
               <form @submit.prevent="storeTask()" action="">
                 <div class="mb-2">
-                  <label for="name" class="text-sm text-gray-700">
+                  <label for="name" class="text-xs text-gray-700">
                     Task Name
                   </label>
                   <input
@@ -21,23 +21,12 @@
                     id="name"
                     name="name"
                     type="text"
-                    :class="{
-                      error: form.errors.name,
-                    }"
-                    class="border-0 block w-full rounded text-gray-600 text-sm focus:border-transparent focus:ring-0"
+                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                     placeholder="Type task name..."
                   />
-                  <small class="text-red-500" v-if="form.errors.name">
-                    {{ form.errors.name }}
-                  </small>
                 </div>
                 <div class="mb-2">
-                  <div
-                    class="ex1 text-xs rounded p-2"
-                    :class="{
-                      error: form.errors.status_id,
-                    }"
-                  >
+                  <div class="ex1 text-xs rounded p-2">
                     <label
                       class="radio red"
                       v-for="status in task_statuses"
@@ -55,12 +44,9 @@
                       </span>
                     </label>
                   </div>
-                  <small class="text-red-500" v-if="form.errors.status_id">
-                    {{ form.errors.status_id }}
-                  </small>
                 </div>
                 <div class="mb-2">
-                  <label for="description" class="text-sm text-gray-700">
+                  <label for="description" class="text-xs text-gray-700">
                     Task Description
                   </label>
                   <textarea
@@ -68,15 +54,9 @@
                     id="description"
                     name="description"
                     rows="8"
-                    class="border-0 block w-full rounded text-gray-600 text-sm focus:border-transparent focus:ring-0"
-                    :class="{
-                      error: form.errors.description,
-                    }"
+                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                     placeholder="Type task description..."
                   ></textarea>
-                  <small class="text-red-500" v-if="form.errors.description">
-                    {{ form.errors.description }}
-                  </small>
                 </div>
                 <div class="mb-2">
                   <button
@@ -94,9 +74,9 @@
                   class="text-xs form-select appearance-none block w-34 px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                   v-model="status"
                 >
-                  <option class="text-sm" value="All" selected>All</option>
+                  <option class="text-xs" value="All" selected>All</option>
                   <option
-                    class="text-sm"
+                    class="text-xs"
                     v-for="status in task_statuses"
                     :key="status.id"
                     :value="status.name"
@@ -114,7 +94,7 @@
                   <jet-loading-circle-dots class="w-20 h-20" />
                 </div>
                 <div class="h-full p-2" v-else>
-                  <ul class="text-sm" v-if="tasks.length > 0">
+                  <ul class="text-xs" v-if="tasks.length > 0">
                     <li
                       v-for="task in tasks"
                       :key="task.id"
@@ -131,7 +111,7 @@
                           {{ task.name }}
                         </div>
                         <div
-                          class="p-1 rounded text-sm border text-xs mr-4"
+                          class="p-1 rounded text-xs border text-xs mr-4"
                           :style="{ backgroundColor: task.status.color }"
                         >
                           {{ task.status.name }}
@@ -170,11 +150,11 @@ export default defineComponent({
   },
   data() {
     return {
-      form: this.$inertia.form({
+      form: {
         name: null,
         description: null,
         status_id: null,
-      }),
+      },
       status: "All",
       tasks: [],
       fetching: true,
@@ -209,7 +189,6 @@ export default defineComponent({
         const { status, data } = await axios.delete(`/api/tasks/${task_id}`);
 
         if (status == 200) {
-          alert(data.message);
           const removeIndex = this.tasks.findIndex(
             (task) => task.id === task_id
           );
@@ -223,10 +202,13 @@ export default defineComponent({
 
     async storeTask() {
       try {
-        const response = this.form.post(this.route("tasks.store"), {
-          preserveScroll: (page) => Object.keys(page.props.errors).length,
-        });
-        console.log(response);
+        const { status, data } = await axios.post(`/api/tasks`, this.form);
+        if (status == 200) {
+          const { task, message } = data;
+
+          alert(message);
+          this.tasks.push(task);
+        }
       } catch (e) {
         console.log(e);
       } finally {

@@ -41,7 +41,10 @@ class ApiTaskController extends Controller
 
             DB::commit();
 
-            return redirect()->route('tasks.index');
+            return response()->json([
+                'message' => 'Success store task',
+                'task' => TaskResource::make($task)
+            ]);
         } catch (HttpException $e) {
             DB::rollBack();
             return response()->json([
