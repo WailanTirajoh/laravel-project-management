@@ -6,12 +6,33 @@
 
     <div class="py-12 text-gray-600">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-md sm:rounded-lg p-4">
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
           <div class="grid grid-cols-3 gap-4">
             <div class="col-span-1 bg-gray-100 p-2 rounded-md border-0">
-              <div class="text-lg text-center">Create new task</div>
+              <div class="text-lg text-center" v-if="form.task_id === 0">Create new task</div>
+              <div class="text-lg text-center" v-else>Edit task</div>
               <hr class="mt-1 mb-2" />
-              <form @submit.prevent="storeTask()" action="">
+              <div>
+                <input type="hidden" v-model="form.task_id" />
+                <div class="mb-2">
+                  <label for="name" class="text-xs text-gray-700">
+                    Project
+                  </label>
+                  <select
+                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                    v-model="form.project_id"
+                    aria-placeholder="Select project"
+                  >
+                    <option
+                      class="text-xs"
+                      v-for="project in projects"
+                      :key="project.id"
+                      :value="project.id"
+                    >
+                      {{ project.name }}
+                    </option>
+                  </select>
+                </div>
                 <div class="mb-2">
                   <label for="name" class="text-xs text-gray-700">
                     Task Name
@@ -26,9 +47,25 @@
                   />
                 </div>
                 <div class="mb-2">
-                  <div class="ex1 text-xs rounded p-2">
+                  <label for="description" class="text-xs text-gray-700">
+                    Task Description
+                  </label>
+                  <textarea
+                    v-model="form.description"
+                    id="description"
+                    name="description"
+                    rows="8"
+                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                    placeholder="Type task description..."
+                  ></textarea>
+                </div>
+                <div class="mb-2">
+                  <label for="description" class="text-xs text-gray-700">
+                    Task Status
+                  </label>
+                  <div class="cst-radio text-xs rounded">
                     <label
-                      class="radio red cursor-pointer"
+                      class="radio orange cursor-pointer"
                       v-for="status in task_statuses"
                       :key="status.id"
                     >
@@ -45,45 +82,73 @@
                     </label>
                   </div>
                 </div>
-                <div class="mb-2">
-                  <label for="description" class="text-xs text-gray-700">
-                    Task Description
-                  </label>
-                  <textarea
-                    v-model="form.description"
-                    id="description"
-                    name="description"
-                    rows="8"
-                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
-                    placeholder="Type task description..."
-                  ></textarea>
-                </div>
-                <div class="mb-2">
+                <div class="mb-2" v-if="form.task_id == 0">
                   <button
+                    @click="storeTask()"
                     class="block bg-white rounded shadow-sm p-2 w-full hover:bg-gray-50 active:bg-gray-100"
                   >
                     Submit
                   </button>
                 </div>
-              </form>
+                <div class="mb-2 flex justify-between" v-else>
+                  <div class="">
+                    <button
+                      @click="cancelEdit()"
+                      class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <div class="flex gap-1">
+                    <button
+                      @click="deleteTask(form.task_id)"
+                      class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 mr-1"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      @click="updateTask()"
+                      class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100"
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="col-span-2 bg-gray-100 p-2 rounded-md border-0">
               <div class="flex justify-between mx-2">
                 <h5 class="font-semibold text-lg text-center">Task Lists</h5>
-                <select
-                  class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
-                  v-model="status"
-                >
-                  <option class="text-xs" value="All" selected>All</option>
-                  <option
-                    class="text-xs"
-                    v-for="status in task_statuses"
-                    :key="status.id"
-                    :value="status.name"
+                <div class="flex gap-1">
+                  <select
+                    class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
+                    v-model="project_id"
                   >
-                    {{ status.name }}
-                  </option>
-                </select>
+                    <option class="text-xs" value="All" selected>All Project</option>
+                    <option
+                      class="text-xs"
+                      v-for="project in projects"
+                      :key="project.id"
+                      :value="project.id"
+                    >
+                      {{ project.name }}
+                    </option>
+                  </select>
+                  <select
+                    class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
+                    v-model="status"
+                  >
+                    <option class="text-xs" value="All" selected>All Status</option>
+                    <option
+                      class="text-xs"
+                      v-for="status in task_statuses"
+                      :key="status.id"
+                      :value="status.name"
+                    >
+                      {{ status.name }}
+                    </option>
+                  </select>
+                </div>
               </div>
               <hr class="mb-2 mt-1" />
               <div class="h-80 overflow-y-auto">
@@ -101,10 +166,10 @@
                       class="bg-white rounded-md p-2 mb-2 relative"
                     >
                       <button
-                        @click="deleteTask(task.id)"
+                        @click="editTask(task.id)"
                         class="absolute -top-2 -right-1 p-1 rounded-full bg-lime-50 shadow w-6 h-6 flex justify-center items-center"
                       >
-                        x
+                        <i class="fa-solid fa-pencil"></i>
                       </button>
                       <div class="flex gap-1 justify-between">
                         <div class="">
@@ -147,14 +212,18 @@ export default defineComponent({
   },
   props: {
     task_statuses: Array,
+    projects: Array,
   },
   data() {
     return {
       form: {
+        task_id: 0,
         name: null,
         description: null,
         status_id: null,
+        project_id: null,
       },
+      project_id: "All",
       status: "All",
       tasks: [],
       fetching: true,
@@ -162,6 +231,10 @@ export default defineComponent({
   },
   watch: {
     status(oldValue, newValue) {
+      this.tasks = [];
+      this.getTasks();
+    },
+    project_id(oldValue, newValue) {
       this.tasks = [];
       this.getTasks();
     },
@@ -174,6 +247,7 @@ export default defineComponent({
         const response = await axios.get("/api/tasks", {
           params: {
             status: this.status,
+            project_id: this.project_id,
           },
         });
 
@@ -192,6 +266,7 @@ export default defineComponent({
           const removeIndex = this.tasks.findIndex(
             (task) => task.id === task_id
           );
+          this.resetForm();
           this.tasks.splice(removeIndex, 1);
         }
       } catch (e) {
@@ -200,19 +275,66 @@ export default defineComponent({
       }
     },
 
+    cancelEdit() {
+      this.resetForm();
+    },
+
+    editTask(task_id) {
+      const taskIndex = this.tasks.findIndex((task) => task.id === task_id);
+      this.fillForm(this.tasks[taskIndex]);
+    },
+
     async storeTask() {
       try {
         const { status, data } = await axios.post(`/api/tasks`, this.form);
         if (status == 200) {
-          const { task, message } = data;
+          const { task } = data;
 
-          alert(message);
           this.tasks.push(task);
+
+          this.resetForm();
         }
       } catch (e) {
         console.log(e);
-      } finally {
       }
+    },
+
+    async updateTask() {
+      try {
+        const { status, data } = await axios.put(
+          `/api/tasks/${this.form.task_id}`,
+          this.form
+        );
+
+        if (status == 200) {
+          const { task } = data;
+
+          const taskIndex = this.tasks.findIndex(
+            (task) => task.id === this.form.task_id
+          );
+          this.tasks[taskIndex] = task;
+
+          this.resetForm();
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
+    fillForm(task) {
+      this.form.task_id = task.id;
+      this.form.name = task.name;
+      this.form.description = task.description;
+      this.form.status_id = task.status.id;
+      this.form.project_id = task.project_id;
+    },
+
+    resetForm() {
+      this.form.task_id = 0;
+      this.form.name = null;
+      this.form.description = null;
+      this.form.status_id = null;
+      this.form.project_id = null;
     },
   },
   mounted() {
@@ -222,19 +344,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.example {
-  margin: 20px;
-}
-.example input {
-  display: none;
-}
-.example label {
-  margin-right: 20px;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.ex1 span {
+.cst-radio span {
   display: block;
   padding: 5px 10px 5px 25px;
   border: 2px solid #ddd;
@@ -242,7 +352,7 @@ export default defineComponent({
   position: relative;
   transition: all 0.25s linear;
 }
-.ex1 span:before {
+.cst-radio span:before {
   content: "";
   position: absolute;
   left: 5px;
@@ -255,29 +365,29 @@ export default defineComponent({
   background-color: #ddd;
   transition: all 0.25s linear;
 }
-.ex1 input:checked + span {
+.cst-radio input:checked + span {
   background-color: #fff;
   box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
 }
-.ex1 .red input:checked + span {
+.cst-radio .red input:checked + span {
   color: red;
   border-color: red;
 }
-.ex1 .red input:checked + span:before {
+.cst-radio .red input:checked + span:before {
   background-color: red;
 }
-.ex1 .blue input:checked + span {
+.cst-radio .blue input:checked + span {
   color: blue;
   border-color: blue;
 }
-.ex1 .blue input:checked + span:before {
+.cst-radio .blue input:checked + span:before {
   background-color: blue;
 }
-.ex1 .orange input:checked + span {
+.cst-radio .orange input:checked + span {
   color: orange;
   border-color: orange;
 }
-.ex1 .orange input:checked + span:before {
+.cst-radio .orange input:checked + span:before {
   background-color: orange;
 }
 

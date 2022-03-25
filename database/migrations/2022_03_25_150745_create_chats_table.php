@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::connection("mongodb")->hasTable('chats'))
+            Schema::connection('mongodb')->drop('chats');
+
         Schema::connection('mongodb')->create('chats', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('reference_id');
@@ -31,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::connection('mongodb')->dropIfExists('chats');
+        Schema::connection('mongodb')->drop('chats');
     }
 };

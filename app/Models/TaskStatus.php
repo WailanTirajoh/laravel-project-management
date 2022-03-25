@@ -10,4 +10,10 @@ class TaskStatus extends Model
     use HasFactory;
 
     protected $table = 'project_task_statuses';
+
+    protected $fillables = [
+        'name',
+        'color',
+        'description'
+    ];
 }

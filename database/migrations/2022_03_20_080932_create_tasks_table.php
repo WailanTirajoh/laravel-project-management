@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('pic_id');
             $table->foreign('pic_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->unsignedBigInteger('task_id');
+            $table->unsignedBigInteger('task_id')->nullable();
             $table->foreign('task_id')->references('id')->on('project_tasks')->onDelete('cascade');
 
             $table->unsignedBigInteger('status_id');
@@ -28,7 +28,7 @@ return new class extends Migration
 
             $table->string('name');
             $table->string('description');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->timestamp('start_date');
             $table->timestamp('finish_date');
             $table->timestamps();

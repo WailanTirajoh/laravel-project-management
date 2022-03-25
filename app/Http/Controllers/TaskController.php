@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Models\Project;
 use App\Models\TaskStatus;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -16,9 +17,11 @@ class TaskController extends Controller
     public function index()
     {
         $task_statuses = TaskStatus::get();
+        $projects = Project::get();
 
         return Inertia::render('Tasks.Index', [
-            'task_statuses' => $task_statuses
+            'task_statuses' => $task_statuses,
+            'projects' => $projects
         ]);
     }
 

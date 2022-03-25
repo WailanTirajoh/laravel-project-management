@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreTaskRequest;
+use App\Http\Requests\Api\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -21,6 +22,10 @@ class ApiTaskController extends Controller
                     $query->where('name', 'like', "%{$request->status}%");
                 }
             });
+        })->when($request->project_id, function ($query) use ($request) {
+            if ($request->project_id !== 'All') {
+                $query->where('project_id', $request->project_id);
+            }
         })->get());
     }
 
@@ -32,8 +37,9 @@ class ApiTaskController extends Controller
             $task = new Task();
             $task->name = $request->name;
             $task->description = $request->description;
-            $task->task_status_id = $request->status_id;
-            $task->notes = 'default';
+            $task->status_id = $request->status_id;
+            $task->project_id = $request->project_id;
+            $task->notes = $request->notes;
             $task->pic_id = Auth::user()->id;
             $task->start_date = now();
             $task->finish_date = now();
@@ -43,6 +49,32 @@ class ApiTaskController extends Controller
 
             return response()->json([
                 'message' => 'Success store task',
+                'task' => TaskResource::make($task)
+            ]);
+        } catch (HttpException $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getStatusCode());
+        }
+    }
+
+    public function update(UpdateTaskRequest $request, Task $task)
+    {
+        try {
+            DB::beginTransaction();
+
+            $task->name = $request->name;
+            $task->description = $request->description;
+            $task->status_id = $request->status_id;
+            $task->project_id = $request->project_id;
+            $task->notes = $request->notes;
+            $task->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Success update task',
                 'task' => TaskResource::make($task)
             ]);
         } catch (HttpException $e) {
