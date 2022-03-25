@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('project_task_statuses', function (Blueprint $table) {
+        Schema::connection('mongodb')->create('chats', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('color');
-            $table->string('description');
+            $table->bigInteger('reference_id');
+            $table->string('reference_type');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->text('message');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_task_statuses');
+        Schema::connection('mongodb')->dropIfExists('chats');
     }
 };

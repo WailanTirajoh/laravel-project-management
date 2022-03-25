@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Jenssegers\Mongodb\Eloquent\HybridRelations;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -17,6 +18,9 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HybridRelations;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -61,6 +65,11 @@ class User extends Authenticatable
 
     public function pic_tasks()
     {
-        return $this->hasMany(Task::class, 'pic_id');
+        return $this->hasMany(ProjectTask::class, 'pic_id');
+    }
+
+    public function chats()
+    {
+        return $this->hasMany(Chat::class, 'user_id');
     }
 }

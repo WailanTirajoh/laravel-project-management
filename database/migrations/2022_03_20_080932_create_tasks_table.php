@@ -13,12 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('project_tasks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('project_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+
             $table->unsignedBigInteger('pic_id');
             $table->foreign('pic_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('task_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignId('task_status_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
+
+            $table->unsignedBigInteger('task_id');
+            $table->foreign('task_id')->references('id')->on('project_tasks')->onDelete('cascade');
+
+            $table->unsignedBigInteger('status_id');
+            $table->foreign('status_id')->references('id')->on('project_task_statuses')->onDelete('cascade');
+
             $table->string('name');
             $table->string('description');
             $table->text('notes');
@@ -36,6 +43,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('project_tasks');
     }
 };

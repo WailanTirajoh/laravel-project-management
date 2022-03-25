@@ -28,7 +28,7 @@
                 <div class="mb-2">
                   <div class="ex1 text-xs rounded p-2">
                     <label
-                      class="radio red"
+                      class="radio red cursor-pointer"
                       v-for="status in task_statuses"
                       :key="status.id"
                     >
@@ -71,7 +71,7 @@
               <div class="flex justify-between mx-2">
                 <h5 class="font-semibold text-lg text-center">Task Lists</h5>
                 <select
-                  class="text-xs form-select appearance-none block w-34 px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                  class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
                   v-model="status"
                 >
                   <option class="text-xs" value="All" selected>All</option>

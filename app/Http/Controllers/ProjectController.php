@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProjectTaskItem;
-use App\Http\Requests\StoreProjectTaskItemRequest;
-use App\Http\Requests\UpdateProjectTaskItemRequest;
+use App\Models\Project;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 
-class ProjectTaskItemController extends Controller
+class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,10 +31,10 @@ class ProjectTaskItemController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreProjectTaskItemRequest  $request
+     * @param  \App\Http\Requests\StoreProjectRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProjectTaskItemRequest $request)
+    public function store(StoreProjectRequest $request)
     {
         //
     }
@@ -42,10 +42,10 @@ class ProjectTaskItemController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ProjectTaskItem  $projectTaskItem
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function show(ProjectTaskItem $projectTaskItem)
+    public function show(Project $project)
     {
         //
     }
@@ -53,10 +53,10 @@ class ProjectTaskItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ProjectTaskItem  $projectTaskItem
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function edit(ProjectTaskItem $projectTaskItem)
+    public function edit(Project $project)
     {
         //
     }
@@ -64,11 +64,11 @@ class ProjectTaskItemController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateProjectTaskItemRequest  $request
-     * @param  \App\Models\ProjectTaskItem  $projectTaskItem
+     * @param  \App\Http\Requests\UpdateProjectRequest  $request
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProjectTaskItemRequest $request, ProjectTaskItem $projectTaskItem)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
         //
     }
@@ -76,10 +76,10 @@ class ProjectTaskItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ProjectTaskItem  $projectTaskItem
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProjectTaskItem $projectTaskItem)
+    public function destroy(Project $project)
     {
         //
     }
