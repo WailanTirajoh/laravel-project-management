@@ -27,10 +27,12 @@ return new class extends Migration
             $table->foreign('status_id')->references('id')->on('project_task_statuses')->onDelete('cascade');
 
             $table->string('name');
-            $table->string('description');
-            $table->text('notes')->nullable();
-            $table->timestamp('start_date');
-            $table->timestamp('finish_date');
+            $table->longText('description');
+            $table->longText('notes')->nullable();
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('due_date')->nullable();
+            $table->timestamp('finish_date')->nullable();
+            $table->integer('sort')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

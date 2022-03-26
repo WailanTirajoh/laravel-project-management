@@ -17,23 +17,23 @@ class TaskStatusSeeder extends Seeder
     {
         $statuses = [
             [
-                'name' => 'CREATED',
+                'name' => 'Created',
                 'color' => '#ffffff'
             ],
             [
-                'name' => 'ON_PROGRESS',
+                'name' => 'On Progress',
                 'color' => '#ffffff'
             ],
             [
-                'name' => 'DONE',
+                'name' => 'Done',
                 'color' => '#ffffff'
             ],
             [
-                'name' => 'ON_HOLD',
+                'name' => 'On Hold',
                 'color' => '#ffffff'
             ],
             [
-                'name' => 'CANCEL',
+                'name' => 'Cancel',
                 'color' => '#ffffff'
             ],
         ];

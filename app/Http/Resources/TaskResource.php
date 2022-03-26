@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TaskResource extends JsonResource
@@ -23,8 +24,12 @@ class TaskResource extends JsonResource
             'project_id' => $this->project_id,
             'status' => $this->status,
             'project' => $this->project,
-            'start_date' => $this->start_date,
+            'sort' => $this->sort,
+            'start_date' => (new Carbon($this->start_date))->format('Y-m-d H:i:s'),
+            'due_date' => $this->due_date,
             'finish_date' => $this->finish_date,
+            'created_at_hour' => $this->created_at->format('H:i:s'),
+            'created_at_date' => $this->created_at->format('d M Y'),
         ];
     }
 }

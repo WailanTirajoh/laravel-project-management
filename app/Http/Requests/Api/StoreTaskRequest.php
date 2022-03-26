@@ -32,11 +32,18 @@ class StoreTaskRequest extends FormRequest
             ],
             'description' => [
                 'required',
-                'max:255'
             ],
             'status_id' => [
                 'required',
                 'in:' . implode(',',TaskStatus::all()->pluck('id')->toArray())
+            ],
+            'start_date' => [
+                'required',
+                'date'
+            ],
+            'due_date' => [
+                'required',
+                'date'
             ],
         ];
     }

@@ -16,13 +16,7 @@ class ApiTaskController extends Controller
 {
     public function index(Request $request)
     {
-        return TaskResource::collection(Task::when($request->status, function ($query) use ($request) {
-            $query->whereHas('status', function ($query) use ($request) {
-                if ($request->status !== 'All') {
-                    $query->where('name', 'like', "%{$request->status}%");
-                }
-            });
-        })->when($request->project_id, function ($query) use ($request) {
+        return TaskResource::collection(Task::when($request->project_id, function ($query) use ($request) {
             if ($request->project_id !== 'All') {
                 $query->where('project_id', $request->project_id);
             }
@@ -34,15 +28,17 @@ class ApiTaskController extends Controller
         try {
             DB::beginTransaction();
 
+            $lastTask = Task::orderBy('sort', 'desc')->first();
             $task = new Task();
+            $task->pic_id = Auth::user()->id;
             $task->name = $request->name;
             $task->description = $request->description;
             $task->status_id = $request->status_id;
             $task->project_id = $request->project_id;
             $task->notes = $request->notes;
-            $task->pic_id = Auth::user()->id;
-            $task->start_date = now();
-            $task->finish_date = now();
+            $task->start_date = $request->start_date;
+            $task->due_date = $request->due_date;
+            $task->sort = $lastTask?->sort ? $lastTask->sort + 1 : 1;
             $task->save();
 
             DB::commit();
@@ -69,6 +65,8 @@ class ApiTaskController extends Controller
             $task->status_id = $request->status_id;
             $task->project_id = $request->project_id;
             $task->notes = $request->notes;
+            $task->start_date = $request->start_date;
+            $task->due_date = $request->due_date;
             $task->save();
 
             DB::commit();

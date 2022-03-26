@@ -32,6 +32,7 @@
         "vue-loader": "^16.1.2"
     },
     "dependencies": {
-        "@babel/core": "^7.17.8"
+        "@babel/core": "^7.17.8",
+        "vue-sweetalert2": "^5.0.2"
     }
 }
