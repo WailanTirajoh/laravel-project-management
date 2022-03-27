@@ -108,7 +108,7 @@
                         :value="status.id"
                         class="hidden"
                       />
-                      <span class="mb-1" :style="{ borderColor: status.color }">
+                      <span class="mb-1">
                         {{ status.name }}
                       </span>
                     </label>
@@ -654,11 +654,11 @@ export default defineComponent({
   background-color: blue;
 }
 .cst-radio .orange input:checked + span {
-  color: orange;
-  border-color: orange;
+  color: rgb(148, 148, 148);
+  border-color: rgb(148, 148, 148);
 }
-.cst-radio .orange input:checked + span:before {
-  background-color: orange;
+.cst-radio .black input:checked + span:before {
+  background-color: rgb(148, 148, 148);
 }
 
 .error {
