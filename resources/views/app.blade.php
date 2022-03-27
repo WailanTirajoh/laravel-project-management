@@ -15,6 +15,7 @@
         <!-- Scripts -->
         @routes
         <script src="{{ mix('js/app.js') }}" defer></script>
+        <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     </head>
     <body class="font-sans antialiased">
         @inertia

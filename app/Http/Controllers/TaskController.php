@@ -16,8 +16,13 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $task_statuses = TaskStatus::get();
-        $projects = Project::get();
+        $task_statuses = TaskStatus::select('id', 'name')->get();
+        $projects = Project::select('id', 'name')->with(['tasks' => function ($task) {
+            $task->select('id', 'name', 'description', 'project_id');
+        }])
+            ->withCount('tasks')
+            ->orderByDesc('tasks_count')
+            ->get();
 
         return Inertia::render('Tasks.Index', [
             'task_statuses' => $task_statuses,

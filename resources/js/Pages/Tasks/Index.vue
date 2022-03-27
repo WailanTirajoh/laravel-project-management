@@ -51,14 +51,26 @@
                   <label for="description" class="text-xs text-gray-700">
                     Description
                   </label>
-                  <textarea
+                  <!-- <textarea
                     v-model="form.description"
                     id="description"
                     name="description"
                     rows="8"
                     class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                     placeholder="Type task description..."
-                  ></textarea>
+                  ></textarea> -->
+                  <div
+                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                  >
+                    <quill-editor
+                      ref="editor"
+                      v-model:content="form.description"
+                      content-type="html"
+                      theme="snow"
+                      placeholder="Type task description..."
+                      rows="8"
+                    ></quill-editor>
+                  </div>
                 </div>
                 <div class="grid grid-cols-2 mb-2 gap-2">
                   <div class="col-span-1">
@@ -70,6 +82,7 @@
                       id="start"
                       name="name"
                       type="datetime-local"
+                      format
                       class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
                     />
@@ -106,6 +119,9 @@
                         {{ status.name }}
                       </span>
                     </label>
+                  </div>
+                  <div class="text-red-500" v-if="errors.status_id">
+                    {{ errors.status_id }}
                   </div>
                 </div>
                 <div class="mb-2 text-sm" v-if="form.task_id == 0">
@@ -150,7 +166,7 @@
                       :key="project.id"
                       :value="project.id"
                     >
-                      {{ project.name }}
+                      {{ project.name }} - {{ project.tasks.length }}
                     </option>
                   </select>
                 </div>
@@ -159,7 +175,7 @@
               <div class="flex gap-2 mb-1 justify-end px-2">
                 <div class="form-check">
                   <label
-                    class="form-check-label border rounded py-2 px-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white"
+                    class="form-check-label border rounded py-2 px-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white transition-all ease-in-out duration-300"
                     :for="`status-check-0`"
                     @click="resetStatus"
                     :class="{
@@ -226,21 +242,20 @@
                         <button
                           v-if="form.task_id === task.id"
                           @click="cancelEdit(task.id)"
-                          class="absolute -top-1 -left-2 p-1 rounded-full bg-lime-50 shadow w-6 h-6 flex justify-center items-center"
+                          class="absolute -top-1 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
                         >
                           <i class="fa-solid fa-xmark"></i>
                         </button>
                         <button
                           v-else
                           @click="editTask(task.id)"
-                          class="absolute -top-1 -left-2 p-1 rounded-full bg-lime-50 shadow w-6 h-6 flex justify-center items-center"
+                          class="absolute -top-1 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
                         >
                           <i class="fa-solid fa-pencil"></i>
                         </button>
                         <div class="flex gap-1 justify-between mb-1">
                           <div class="">
                             {{ task.name }}
-                            <span v-if="task.swapping">Swapping</span>
                           </div>
                           <div class="flex gap-1">
                             <div
@@ -250,7 +265,7 @@
                               {{ task.status.name }}
                             </div>
                             <div
-                              class="rounded text-xs border cursor-grab px-2 flex justify-center items-center active:cursort-grabbing"
+                              class="rounded text-xs border cursor-grab px-2 flex justify-center items-center active:cursor-grabbing"
                               @dragstart="dragStart(task, index)"
                               draggable="true"
                             >
@@ -260,9 +275,8 @@
                         </div>
                         <div
                           class="text-gray-500 whitespace-pre-wrap bg-gray-50 p-1 rounded-lg"
-                        >
-                          {{ task.description }}
-                        </div>
+                          v-html="task.description"
+                        ></div>
                       </div>
                       <div class="text-xs">
                         <div>
@@ -317,6 +331,7 @@ export default defineComponent({
         start_date: null,
         due_date: null,
       },
+      errors: {},
       project_id: "All",
       status: [],
       tasks: [],
@@ -448,6 +463,8 @@ export default defineComponent({
       this.form.project_id = task.project_id;
       this.form.start_date = task.start_date;
       this.form.due_date = task.due_date;
+
+      this.$refs.editor.setHTML(task.description);
     },
 
     resetForm() {
@@ -458,6 +475,8 @@ export default defineComponent({
       this.form.project_id = null;
       this.form.start_date = null;
       this.form.due_date = null;
+
+      this.$refs.editor.setHTML("");
     },
 
     dragStart(item, index) {
@@ -492,7 +511,6 @@ export default defineComponent({
       const taskIndex1 = this.tasks.findIndex(
         (task) => task.id === this.drag.start.item.id
       );
-
       this.tasks[taskIndex1].sort = index;
       this.tasks[taskIndex1].swapping = false;
 
@@ -538,7 +556,7 @@ export default defineComponent({
 .cst-radio span {
   display: block;
   padding: 5px 10px 5px 25px;
-  border: 2px solid #ddd;
+  border: 1px solid #fff;
   border-radius: 5px;
   position: relative;
   transition: all 0.25s linear;

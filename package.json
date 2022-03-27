@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "@babel/core": "^7.17.8",
+        "@vueup/vue-quill": "^1.0.0-beta.8",
         "vue-sweetalert2": "^5.0.2"
     }
 }
