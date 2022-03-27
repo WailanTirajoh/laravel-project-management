@@ -286,14 +286,20 @@
                       </div>
                       <div class="text-xs">
                         <div>
-                          <div class="">
+                          <div class="font-semibold">
+                            {{ task.pic.name }}
+                          </div>
+                          <div class="font-thin">
                             {{ task.project.name }}
                           </div>
-                          <div class="text-gray-500">
-                            {{ task.created_at_date }}
+                          <!-- <div class="font-thin text-gray-500">
+                            {{ task.due_date_date }}
                           </div>
-                          <div class="text-gray-500">
-                            {{ task.created_at_hour }}
+                          <div class="font-thin text-gray-500">
+                            {{ task.due_date_hour }}
+                          </div> -->
+                          <div class="font-thin text-gray-500">
+                            {{ task.due_left }}
                           </div>
                         </div>
                       </div>

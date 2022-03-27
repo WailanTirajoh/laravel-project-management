@@ -28,8 +28,9 @@ class TaskResource extends JsonResource
             'start_date' => str_replace(' ','T',(new Carbon($this->start_date))->format('Y-m-d H:i')),
             'due_date' => str_replace(' ','T',(new Carbon($this->due_date))->format('Y-m-d H:i')),
             'finish_date' => $this->finish_date,
-            'created_at_hour' => $this->created_at->format('H:i:s'),
-            'created_at_date' => $this->created_at->format('d M Y'),
+            'due_date_hour' => (new Carbon($this->due_date))->format('H:i:s'),
+            'due_date_date' => (new Carbon($this->due_date))->format('d M Y'),
+            'due_left' => ($this->due_date > now() ? 'Due in ' : 'Expired ') . (new Carbon($this->due_date))->diffForHumans(),
         ];
     }
 }

@@ -28989,13 +28989,13 @@ var _hoisted_61 = {
   "class": "text-xs"
 };
 var _hoisted_62 = {
-  "class": ""
+  "class": "font-semibold"
 };
 var _hoisted_63 = {
-  "class": "text-gray-500"
+  "class": "font-thin"
 };
 var _hoisted_64 = {
-  "class": "text-gray-500"
+  "class": "font-thin text-gray-500"
 };
 var _hoisted_65 = {
   key: 1,
@@ -29254,11 +29254,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         /* PROPS */
         , _hoisted_60)])], 46
         /* CLASS, STYLE, PROPS, HYDRATE_EVENTS */
-        , _hoisted_47), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_61, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_62, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.project.name), 1
+        , _hoisted_47), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_61, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_62, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.pic.name), 1
         /* TEXT */
-        ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_63, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.created_at_date), 1
+        ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_63, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.project.name), 1
         /* TEXT */
-        ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_64, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.created_at_hour), 1
+        ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"font-thin text-gray-500\">\n                            {{ task.due_date_date }}\n                          </div>\n                          <div class=\"font-thin text-gray-500\">\n                            {{ task.due_date_hour }}\n                          </div> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_64, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.due_left), 1
         /* TEXT */
         )])])]);
       }), 128
