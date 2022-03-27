@@ -99,7 +99,7 @@
                   <div class="cst-radio text-xs rounded">
                     <label
                       class="radio orange cursor-pointer"
-                      v-for="status in task_statuses"
+                      v-for="status in statuses"
                       :key="status.id"
                     >
                       <input
@@ -174,7 +174,7 @@
                     :class="{
                       'font-bold':
                         status.length === 0 ||
-                        status.length === task_statuses.length,
+                        status.length === statuses.length,
                     }"
                   >
                     All
@@ -182,7 +182,7 @@
                 </div>
                 <div
                   class="form-check"
-                  v-for="thestatus in task_statuses"
+                  v-for="thestatus in statuses"
                   :key="thestatus.id"
                 >
                   <input
@@ -202,7 +202,7 @@
               </div>
               <div
                 class="overflow-y-auto bg-gray-50 rounded-2xl p-2"
-                style="height: 40rem"
+                style="height: 36rem"
               >
                 <div
                   v-if="fetching"
@@ -215,22 +215,28 @@
                     <li
                       v-for="(task, index) in filteredTasks"
                       :key="task.id"
-                      class="grid grid-cols-4 gap-4 task-sort"
-                      @dragover="dragOver(task, index)"
-                      @dragenter="dragEnter(task, index)"
-                      @dragleave="dragLeave(task, index)"
-                      @drop="dragDrop(task, index)"
-                      @dragover.prevent
-                      @dragenter.prevent
-                      :data-index="index"
-                      :data-id="task.id"
+                      class="grid grid-cols-4 gap-4"
                     >
                       <div
-                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-3 transition-all ease-in-out duration-300"
+                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-3 transition-all ease-in-out duration-300 cursor-grab active:cursor-grabbing task-sort"
                         :class="{
                           'bg-gray-100': form.task_id === task.id,
                           'shadow-md -translate-y-1': task.swapping,
                         }"
+                        style="border-right: 0.25rem solid"
+                        :style="{
+                          'border-right-color': task.status.color,
+                        }"
+                        draggable="true"
+                        @dragstart="dragStart(task, index)"
+                        @dragover="dragOver(task, index)"
+                        @dragenter="dragEnter(task, index)"
+                        @dragleave="dragLeave(task, index)"
+                        @drop="dragDrop(task, index)"
+                        @dragover.prevent
+                        @dragenter.prevent
+                        :data-index="index"
+                        :data-id="task.id"
                       >
                         <button
                           v-if="form.task_id === task.id"
@@ -252,17 +258,22 @@
                           </div>
                           <div class="flex gap-1">
                             <div
-                              class="p-1 rounded text-xs border text-xs"
-                              :style="{ backgroundColor: task.status.color }"
+                              class="p-1 rounded text-xs border text-xs flex items-center gap-2"
                             >
+                              <input
+                                :ref="`color_${task.status.id}_${index}`"
+                                type="color"
+                                id="favcolor"
+                                class="w-4 h-4 rounded color-input"
+                                name="favcolor"
+                                :value="task.status.color"
+                                @change="
+                                  updateStatusColor(
+                                    `color_${task.status.id}_${index}`
+                                  )
+                                "
+                              />
                               {{ task.status.name }}
-                            </div>
-                            <div
-                              class="rounded text-xs border cursor-grab px-2 flex justify-center items-center active:cursor-grabbing"
-                              @dragstart="dragStart(task, index)"
-                              draggable="true"
-                            >
-                              <i class="fa-solid fa-grip-lines"></i>
                             </div>
                           </div>
                         </div>
@@ -353,6 +364,7 @@ export default defineComponent({
           item: null,
         },
       },
+      statuses: this.task_statuses,
     };
   },
   computed: {
@@ -555,6 +567,36 @@ export default defineComponent({
         console.log(response);
       } catch (e) {}
     },
+
+    async updateStatusColor(ref) {
+      const color = this.$refs[ref][0].value;
+      const id = ref.split("_")[1];
+
+      try {
+        const { status, data } = await axios.put(`/api/statuses/${id}/color`, {
+          color: color,
+        });
+
+        if (status === 200) {
+          // Update status color
+          const statusIndex = this.statuses.findIndex(
+            (stat) => stat.id === parseInt(id)
+          );
+          this.statuses[statusIndex].color = color;
+
+          // Update every task status color
+          this.tasks
+            .filter((task) => {
+              return task.status.id === parseInt(id);
+            })
+            .map((task) => {
+              task.status.color = color;
+            });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
   mounted() {
     this.getTasks();
@@ -565,12 +607,14 @@ export default defineComponent({
 
 <style scoped>
 .cst-radio span {
-  display: block;
   padding: 5px 10px 5px 25px;
   border: 1px solid #fff;
   border-radius: 5px;
   position: relative;
   transition: all 0.25s linear;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .cst-radio span:before {
   content: "";
@@ -617,5 +661,15 @@ export default defineComponent({
 
 .status-check:checked + label {
   font-weight: bold;
+}
+.color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0;
+}
+.color-input::-webkit-color-swatch-wrapper {
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0;
 }
 </style>

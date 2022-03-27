@@ -16,7 +16,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $task_statuses = TaskStatus::select('id', 'name')->get();
+        $task_statuses = TaskStatus::select('id', 'name', 'color')->get();
         $projects = Project::select('id', 'name')->with(['tasks' => function ($task) {
             $task->select('id', 'name', 'description', 'project_id');
         }])

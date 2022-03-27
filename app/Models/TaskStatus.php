@@ -11,7 +11,7 @@ class TaskStatus extends Model
 
     protected $table = 'project_task_statuses';
 
-    protected $fillables = [
+    protected $fillable = [
         'name',
         'color',
         'description'

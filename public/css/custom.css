@@ -1031,7 +1031,7 @@
 }
 
 .ql-toolbar.ql-snow .ql-formats {
-    margin-right: unset;
+    margin-right: 15px;
 }
 
 .ql-toolbar.ql-snow .ql-picker-label {
