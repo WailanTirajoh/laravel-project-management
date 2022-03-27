@@ -962,6 +962,9 @@ select {
 .-left-2 {
   left: -0.5rem;
 }
+.-top-2 {
+  top: -0.5rem;
+}
 .z-0 {
   z-index: 0;
 }
@@ -1636,6 +1639,9 @@ select {
 }
 .uppercase {
   text-transform: uppercase;
+}
+.italic {
+  font-style: italic;
 }
 .leading-5 {
   line-height: 1.25rem;

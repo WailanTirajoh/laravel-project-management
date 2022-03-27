@@ -40,6 +40,8 @@
     text-align: left;
     white-space: pre-wrap;
     word-wrap: break-word;
+    min-height: unset;
+    height: unset;
 }
 
 .ql-editor>* {

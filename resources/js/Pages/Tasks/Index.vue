@@ -51,14 +51,6 @@
                   <label for="description" class="text-xs text-gray-700">
                     Description
                   </label>
-                  <!-- <textarea
-                    v-model="form.description"
-                    id="description"
-                    name="description"
-                    rows="8"
-                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
-                    placeholder="Type task description..."
-                  ></textarea> -->
                   <div
                     class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                   >
@@ -69,6 +61,7 @@
                       theme="snow"
                       placeholder="Type task description..."
                       rows="8"
+                      :toolbar="toolbar"
                     ></quill-editor>
                   </div>
                 </div>
@@ -137,14 +130,14 @@
                     @click="deleteTask(form.task_id)"
                     class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 mr-1"
                   >
-                    Delete
+                    <i class="fa-solid fa-trash"></i>
                   </button>
                   <button
                     @click="updateTask()"
                     class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 block w-40"
                     style="width: 10rem"
                   >
-                    Update
+                    Save
                   </button>
                 </div>
               </div>
@@ -175,7 +168,7 @@
               <div class="flex gap-2 mb-1 justify-end px-2">
                 <div class="form-check">
                   <label
-                    class="form-check-label border rounded py-2 px-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white transition-all ease-in-out duration-300"
+                    class="form-check-label border rounded p-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white transition-all ease-in-out duration-300"
                     :for="`status-check-0`"
                     @click="resetStatus"
                     :class="{
@@ -200,7 +193,7 @@
                     :value="thestatus.id"
                   />
                   <label
-                    class="form-check-label border rounded py-2 px-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white"
+                    class="form-check-label border rounded p-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white"
                     :for="`status-check-${thestatus.id}`"
                   >
                     {{ thestatus.name }} {{ totalStatus(thestatus.id) }}
@@ -242,19 +235,19 @@
                         <button
                           v-if="form.task_id === task.id"
                           @click="cancelEdit(task.id)"
-                          class="absolute -top-1 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                          class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
                         >
                           <i class="fa-solid fa-xmark"></i>
                         </button>
                         <button
                           v-else
                           @click="editTask(task.id)"
-                          class="absolute -top-1 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                          class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
                         >
                           <i class="fa-solid fa-pencil"></i>
                         </button>
                         <div class="flex gap-1 justify-between mb-1">
-                          <div class="">
+                          <div class="flex items-center">
                             {{ task.name }}
                           </div>
                           <div class="flex gap-1">
@@ -273,10 +266,12 @@
                             </div>
                           </div>
                         </div>
-                        <div
-                          class="text-gray-500 whitespace-pre-wrap bg-gray-50 p-1 rounded-lg"
-                          v-html="task.description"
-                        ></div>
+                        <div class="bg-gray-50 rounded-lg ql-snow">
+                          <div
+                            class="ql-editor"
+                            v-html="task.description"
+                          ></div>
+                        </div>
                       </div>
                       <div class="text-xs">
                         <div>
@@ -322,6 +317,22 @@ export default defineComponent({
   },
   data() {
     return {
+      toolbar: [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        [{ font: [] }],
+        ["bold", "italic", "underline", "strike"], // toggled buttons
+        ["blockquote", "code-block"],
+
+        // [{ header: 1 }, { header: 2 }], // custom button values
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ script: "sub" }, { script: "super" }], // superscript/subscript
+        [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+        [{ direction: "rtl" }], // text direction
+        [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+        [{ align: [] }],
+
+        ["clean"],
+      ],
       form: {
         task_id: 0,
         name: null,
