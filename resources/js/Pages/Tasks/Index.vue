@@ -35,23 +35,10 @@
                       {{ project.name }}
                     </option>
                   </select>
-
-                  <span
-                    @click="errors.project_id = null"
-                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
-                    :class="{
-                      'opacity-80': errors.project_id,
-                    }"
-                  >
-                    <ul>
-                      <li
-                        v-for="(error, index) in errors.project_id"
-                        :key="index"
-                      >
-                        {{ error }}
-                      </li>
-                    </ul>
-                  </span>
+                  <error-message
+                    :errors="errors.project_id"
+                    @remove-error="errors.project_id = null"
+                  />
                 </div>
                 <div class="mb-2 tooltip">
                   <label for="name" class="text-xs text-gray-700"> Name </label>
@@ -65,19 +52,10 @@
                     placeholder="Type task name..."
                     @focus="errors.name = null"
                   />
-                  <span
-                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
-                    @click="errors.name = null"
-                    :class="{
-                      'opacity-80': errors.name,
-                    }"
-                  >
-                    <ul>
-                      <li v-for="(error, index) in errors.name" :key="index">
-                        {{ error }}
-                      </li>
-                    </ul>
-                  </span>
+                  <error-message
+                    :errors="errors.name"
+                    @remove-error="errors.name = null"
+                  />
                 </div>
                 <div class="mb-2 tooltip">
                   <label for="description" class="text-xs text-gray-700">
@@ -97,22 +75,10 @@
                       :toolbar="toolbar"
                     ></quill-editor>
                   </div>
-                  <span
-                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
-                    @click="errors.description = null"
-                    :class="{
-                      'opacity-80': errors.description,
-                    }"
-                  >
-                    <ul>
-                      <li
-                        v-for="(error, index) in errors.description"
-                        :key="index"
-                      >
-                        {{ error }}
-                      </li>
-                    </ul>
-                  </span>
+                  <error-message
+                    :errors="errors.description"
+                    @remove-error="errors.description = null"
+                  />
                 </div>
                 <div class="grid grid-cols-2 mb-2 gap-2">
                   <div class="col-span-1 tooltip">
@@ -129,22 +95,10 @@
                       class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
                     />
-                    <span
-                      class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
-                      @click="errors.start_date = null"
-                      :class="{
-                        'opacity-80': errors.start_date,
-                      }"
-                    >
-                      <ul>
-                        <li
-                          v-for="(error, index) in errors.start_date"
-                          :key="index"
-                        >
-                          {{ error }}
-                        </li>
-                      </ul>
-                    </span>
+                    <error-message
+                      :errors="errors.start_date"
+                      @remove-error="errors.start_date = null"
+                    />
                   </div>
                   <div class="col-span-1 tooltip">
                     <label for="due" class="text-xs text-gray-700"> Due </label>
@@ -157,22 +111,10 @@
                       class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
                     />
-                    <span
-                      class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
-                      @click="errors.due_date = null"
-                      :class="{
-                        'opacity-80': errors.due_date,
-                      }"
-                    >
-                      <ul>
-                        <li
-                          v-for="(error, index) in errors.due_date"
-                          :key="index"
-                        >
-                          {{ error }}
-                        </li>
-                      </ul>
-                    </span>
+                    <error-message
+                      :errors="errors.due_date"
+                      @remove-error="errors.due_date = null"
+                    />
                   </div>
                 </div>
                 <div class="mb-2 tooltip">
@@ -197,23 +139,10 @@
                       </span>
                     </label>
                   </div>
-
-                  <span
-                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
-                    @click="errors.status_id = null"
-                    :class="{
-                      'opacity-80': errors.status_id,
-                    }"
-                  >
-                    <ul>
-                      <li
-                        v-for="(error, index) in errors.status_id"
-                        :key="index"
-                      >
-                        {{ error }}
-                      </li>
-                    </ul>
-                  </span>
+                  <error-message
+                    :errors="errors.status_id"
+                    @remove-error="errors.status_id = null"
+                  />
                 </div>
                 <div class="mb-2 text-sm" v-if="form.task_id == 0">
                   <button
@@ -454,11 +383,13 @@
 import { defineComponent } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
+import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
 
 export default defineComponent({
   components: {
     AppLayout,
     JetLoadingCircleDots,
+    ErrorMessage,
   },
   props: {
     task_statuses: Array,
@@ -492,7 +423,14 @@ export default defineComponent({
         start_date: null,
         due_date: null,
       },
-      errors: {},
+      errors: {
+        name: null,
+        description: null,
+        status_id: null,
+        project_id: null,
+        start_date: null,
+        due_date: null,
+      },
       project_id: "All",
       status: [],
       tasks: [],
@@ -644,6 +582,7 @@ export default defineComponent({
     },
 
     fillForm(task) {
+      this.resetErrors();
       this.form.task_id = task.id;
       this.form.name = task.name;
       this.form.description = task.description;
@@ -656,6 +595,7 @@ export default defineComponent({
     },
 
     resetForm() {
+      this.resetErrors();
       this.form.task_id = 0;
       this.form.name = null;
       this.form.description = null;
@@ -763,6 +703,13 @@ export default defineComponent({
       } catch (e) {
         console.log(e);
       }
+    },
+
+    resetErrors() {
+      let vm = this
+      Object.keys(this.errors).forEach(function (index) {
+        vm.errors[index] = null;
+      });
     },
   },
   mounted() {
