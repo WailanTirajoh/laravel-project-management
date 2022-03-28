@@ -16,11 +16,12 @@
               <hr class="mt-1 mb-2" />
               <div>
                 <input type="hidden" v-model="form.task_id" />
-                <div class="mb-2">
+                <div class="mb-2 tooltip">
                   <label for="name" class="text-xs text-gray-700">
                     Project
                   </label>
                   <select
+                    @change="errors.project_id = null"
                     class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                     v-model="form.project_id"
                     aria-placeholder="Select project"
@@ -34,8 +35,25 @@
                       {{ project.name }}
                     </option>
                   </select>
+
+                  <span
+                    @click="errors.project_id = null"
+                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
+                    :class="{
+                      'opacity-80': errors.project_id,
+                    }"
+                  >
+                    <ul>
+                      <li
+                        v-for="(error, index) in errors.project_id"
+                        :key="index"
+                      >
+                        {{ error }}
+                      </li>
+                    </ul>
+                  </span>
                 </div>
-                <div class="mb-2">
+                <div class="mb-2 tooltip">
                   <label for="name" class="text-xs text-gray-700"> Name </label>
                   <input
                     v-model="form.name"
@@ -45,9 +63,23 @@
                     type="text"
                     class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                     placeholder="Type task name..."
+                    @focus="errors.name = null"
                   />
+                  <span
+                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
+                    @click="errors.name = null"
+                    :class="{
+                      'opacity-80': errors.name,
+                    }"
+                  >
+                    <ul>
+                      <li v-for="(error, index) in errors.name" :key="index">
+                        {{ error }}
+                      </li>
+                    </ul>
+                  </span>
                 </div>
-                <div class="mb-2">
+                <div class="mb-2 tooltip">
                   <label for="description" class="text-xs text-gray-700">
                     Description
                   </label>
@@ -56,6 +88,7 @@
                   >
                     <quill-editor
                       ref="editor"
+                      @focus="errors.description = null"
                       v-model:content="form.description"
                       content-type="html"
                       theme="snow"
@@ -64,14 +97,31 @@
                       :toolbar="toolbar"
                     ></quill-editor>
                   </div>
+                  <span
+                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
+                    @click="errors.description = null"
+                    :class="{
+                      'opacity-80': errors.description,
+                    }"
+                  >
+                    <ul>
+                      <li
+                        v-for="(error, index) in errors.description"
+                        :key="index"
+                      >
+                        {{ error }}
+                      </li>
+                    </ul>
+                  </span>
                 </div>
                 <div class="grid grid-cols-2 mb-2 gap-2">
-                  <div class="col-span-1">
+                  <div class="col-span-1 tooltip">
                     <label for="start" class="text-xs text-gray-700">
                       Start
                     </label>
                     <input
                       v-model="form.start_date"
+                      @focus="errors.start_date = null"
                       id="start"
                       name="name"
                       type="datetime-local"
@@ -79,20 +129,53 @@
                       class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
                     />
+                    <span
+                      class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
+                      @click="errors.start_date = null"
+                      :class="{
+                        'opacity-80': errors.start_date,
+                      }"
+                    >
+                      <ul>
+                        <li
+                          v-for="(error, index) in errors.start_date"
+                          :key="index"
+                        >
+                          {{ error }}
+                        </li>
+                      </ul>
+                    </span>
                   </div>
-                  <div class="col-span-1">
+                  <div class="col-span-1 tooltip">
                     <label for="due" class="text-xs text-gray-700"> Due </label>
                     <input
                       v-model="form.due_date"
+                      @focus="errors.due_date = null"
                       id="due"
                       name="name"
                       type="datetime-local"
                       class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
                     />
+                    <span
+                      class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
+                      @click="errors.due_date = null"
+                      :class="{
+                        'opacity-80': errors.due_date,
+                      }"
+                    >
+                      <ul>
+                        <li
+                          v-for="(error, index) in errors.due_date"
+                          :key="index"
+                        >
+                          {{ error }}
+                        </li>
+                      </ul>
+                    </span>
                   </div>
                 </div>
-                <div class="mb-2">
+                <div class="mb-2 tooltip">
                   <label for="description" class="text-xs text-gray-700">
                     Status
                   </label>
@@ -104,6 +187,7 @@
                     >
                       <input
                         v-model="form.status_id"
+                        @change="errors.status_id = null"
                         type="radio"
                         :value="status.id"
                         class="hidden"
@@ -113,16 +197,34 @@
                       </span>
                     </label>
                   </div>
-                  <div class="text-red-500" v-if="errors.status_id">
-                    {{ errors.status_id }}
-                  </div>
+
+                  <span
+                    class="opacity-0 tooltiptext text-xs transition-opacity ease-in-out duration-300"
+                    @click="errors.status_id = null"
+                    :class="{
+                      'opacity-80': errors.status_id,
+                    }"
+                  >
+                    <ul>
+                      <li
+                        v-for="(error, index) in errors.status_id"
+                        :key="index"
+                      >
+                        {{ error }}
+                      </li>
+                    </ul>
+                  </span>
                 </div>
                 <div class="mb-2 text-sm" v-if="form.task_id == 0">
                   <button
+                    :disabled="form.is_processing"
                     @click="storeTask()"
                     class="block bg-white rounded shadow-sm p-2 w-full hover:bg-gray-50 active:bg-gray-100"
+                    :class="{
+                      'cursor-wait': form.is_processing,
+                    }"
                   >
-                    Submit
+                    {{ form.is_processing ? "Processing" : "Submit" }}
                   </button>
                 </div>
                 <div class="mb-2 flex justify-between text-sm" v-else>
@@ -133,11 +235,15 @@
                     <i class="fa-solid fa-trash"></i>
                   </button>
                   <button
+                    :disabled="form.is_processing"
                     @click="updateTask()"
                     class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 block w-40"
                     style="width: 10rem"
+                    :class="{
+                      'cursor-wait': form.is_processing,
+                    }"
                   >
-                    Save
+                    {{ form.is_processing ? "Processing" : "Save" }}
                   </button>
                 </div>
               </div>
@@ -146,6 +252,32 @@
               <div class="flex justify-between mx-2">
                 <h5 class="font-semibold text-lg text-center">Task Lists</h5>
                 <div class="flex gap-1">
+                  <select
+                    class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
+                    v-model="sort.type_value"
+                  >
+                    <option
+                      class="text-xs"
+                      v-for="(srt, index) in sort.type"
+                      :key="index"
+                      :value="srt"
+                    >
+                      {{ srt }}
+                    </option>
+                  </select>
+                  <select
+                    class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
+                    v-model="sort.value"
+                  >
+                    <option
+                      class="text-xs"
+                      v-for="(srt, index) in sort.fillable"
+                      :key="index"
+                      :value="srt"
+                    >
+                      {{ srt }}
+                    </option>
+                  </select>
                   <select
                     class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
                     v-model="project_id"
@@ -228,7 +360,7 @@
                           'border-right-color': task.status.color,
                         }"
                         draggable="true"
-                        @dragstart="dragStart(task, index)"
+                        @dragstart="dragStart(task, index, $event)"
                         @dragover="dragOver(task, index)"
                         @dragenter="dragEnter(task, index)"
                         @dragleave="dragLeave(task, index)"
@@ -351,6 +483,7 @@ export default defineComponent({
         ["clean"],
       ],
       form: {
+        is_processing: false,
         task_id: 0,
         name: null,
         description: null,
@@ -370,17 +503,33 @@ export default defineComponent({
           item: null,
         },
       },
+      sort: {
+        value: "Priority",
+        type_value: "Desc",
+        fillable: ["Date", "Priority"],
+        type: ["Asc", "Desc"],
+      },
       statuses: this.task_statuses,
     };
   },
   computed: {
     filteredTasks() {
+      let vm = this;
       return this.tasks
         .filter((task) => {
           if (this.status.length === 0) return true;
           return this.status.includes(task.status_id);
         })
-        .sort((a, b) => a.sort - b.sort);
+        .sort(function (a, b) {
+          if (vm.sort.value === "Priority") {
+            return vm.sort.type_value === "Desc"
+              ? a.sort - b.sort
+              : b.sort - a.sort;
+          }
+          return vm.sort.type_value === "Desc"
+            ? new Date(b.due_date_default) - new Date(a.due_date_default)
+            : new Date(a.due_date_default) - new Date(b.due_date_default);
+        });
     },
   },
   watch: {
@@ -449,6 +598,7 @@ export default defineComponent({
 
     async storeTask() {
       try {
+        this.form.is_processing = true;
         const { status, data } = await axios.post(`/api/tasks`, this.form);
         if (status == 200) {
           const { task } = data;
@@ -458,12 +608,17 @@ export default defineComponent({
           this.resetForm();
         }
       } catch (e) {
-        console.log(e);
+        if (e.response && e.response.data && e.response.data.errors) {
+          this.errors = e.response.data.errors;
+        }
+      } finally {
+        this.form.is_processing = false;
       }
     },
 
     async updateTask() {
       try {
+        this.form.is_processing = true;
         const { status, data } = await axios.put(
           `/api/tasks/${this.form.task_id}`,
           this.form
@@ -480,7 +635,11 @@ export default defineComponent({
           this.resetForm();
         }
       } catch (e) {
-        console.log(e);
+        if (e.response && e.response.data && e.response.data.errors) {
+          this.errors = e.response.data.errors;
+        }
+      } finally {
+        this.form.is_processing = false;
       }
     },
 
@@ -508,12 +667,14 @@ export default defineComponent({
       this.$refs.editor.setHTML("");
     },
 
-    dragStart(item, index) {
+    dragStart(item, index, e) {
       const taskIndex2 = this.tasks.findIndex((task) => task.id === item.id);
       this.tasks[taskIndex2].swapping = true;
 
       this.drag.start.index = index;
       this.drag.start.item = item;
+
+      e.dataTransfer.effectAllowed = "move";
     },
 
     dragEnter(item, index) {
@@ -678,4 +839,47 @@ export default defineComponent({
   border-radius: 0.25rem;
   padding: 0;
 }
+
+.cursor-wait {
+  cursor: wait !important;
+}
+
+.tooltip {
+  position: relative;
+  /* display: inline-block; */
+}
+
+.tooltip .tooltiptext {
+  /* visibility: hidden; */
+  width: 120px;
+  background-color: red;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: 110%;
+  left: 50%;
+  margin-left: -60px;
+  /* opacity: 0; */
+  /* transition: opacity 1s; */
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent red transparent;
+}
+
+/* .tooltip:hover .tooltiptext {
+  transition-delay: 1s;
+  visibility: visible;
+  opacity: 0.85;
+} */
 </style>

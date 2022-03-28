@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Project;
 use App\Models\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -25,6 +26,10 @@ class StoreTaskRequest extends FormRequest
     public function rules()
     {
         return [
+            'project_id' => [
+                'required',
+                'in:' . implode(',', Project::all()->pluck('id')->toArray())
+            ],
             'name' => [
                 'required',
                 'string',
