@@ -12,3 +12,7 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+/public/css/custom.css
+/public/css/app.css
+/public/css/tooltip.css
+/public/js/app.js

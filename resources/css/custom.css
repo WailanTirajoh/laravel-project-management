@@ -781,7 +781,7 @@
 }
 
 .ql-snow .ql-picker-label {
-    cursor: pointer;
+cursor: pointer;
     display: inline-block;
     height: 100%;
     padding-left: 8px;
