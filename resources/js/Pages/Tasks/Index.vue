@@ -272,7 +272,13 @@
                   <jet-loading-circle-dots class="w-20 h-20" />
                 </div>
                 <div class="h-full p-2" v-else>
-                  <transition-group tag="ul" name="list" class="text-xs" v-if="filteredTasks.length > 0" appear="">
+                  <transition-group
+                    tag="ul"
+                    name="list"
+                    class="text-xs"
+                    v-if="filteredTasks.length > 0"
+                    appear=""
+                  >
                     <li
                       v-for="(task, index) in filteredTasks"
                       :key="task.id"
@@ -330,6 +336,11 @@
                                 :value="task.status.color"
                                 @change="
                                   updateStatusColor(
+                                    `color_${task.status.id}_${index}`
+                                  )
+                                "
+                                @input="
+                                  liveUpdateDomStatusColor(
                                     `color_${task.status.id}_${index}`
                                   )
                                 "
@@ -686,27 +697,32 @@ export default defineComponent({
 
         if (status === 200) {
           // Update status color
-          const statusIndex = this.statuses.findIndex(
-            (stat) => stat.id === parseInt(id)
-          );
-          this.statuses[statusIndex].color = color;
-
-          // Update every task status color
-          this.tasks
-            .filter((task) => {
-              return task.status.id === parseInt(id);
-            })
-            .map((task) => {
-              task.status.color = color;
-            });
         }
       } catch (e) {
         console.log(e);
       }
     },
 
+    liveUpdateDomStatusColor(ref) {
+      const color = this.$refs[ref][0].value;
+      const id = ref.split("_")[1];
+      const statusIndex = this.statuses.findIndex(
+        (stat) => stat.id === parseInt(id)
+      );
+      this.statuses[statusIndex].color = color;
+
+      // Update every task status color
+      this.tasks
+        .filter((task) => {
+          return task.status.id === parseInt(id);
+        })
+        .map((task) => {
+          task.status.color = color;
+        });
+    },
+
     resetErrors() {
-      let vm = this
+      let vm = this;
       Object.keys(this.errors).forEach(function (index) {
         vm.errors[index] = null;
       });
