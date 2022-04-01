@@ -14,7 +14,10 @@ class Project extends Model
     protected $table = 'projects';
 
     protected $fillable = [
-        'name'
+        'name',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     public function tasks()

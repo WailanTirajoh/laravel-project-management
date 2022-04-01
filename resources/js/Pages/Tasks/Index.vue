@@ -323,7 +323,7 @@
                       class="grid grid-cols-4 gap-2 gap-y-5"
                     >
                       <div
-                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-4 md:col-span-3 transition-all ease-in-out duration-300 cursor-grab active:cursor-grabbing task-sort"
+                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-4 md:col-span-3 transition-all ease-in-out duration-300"
                         :class="{
                           'bg-gray-100': form.task_id === task.id,
                           'shadow-md -translate-y-1': task.swapping,
@@ -828,3 +828,6 @@ export default defineComponent({
 }
 .list-move {
   transition: all 0.4s ease;
+}
+
+</style>

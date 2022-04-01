@@ -14,6 +14,9 @@ class TaskStatus extends Model
     protected $fillable = [
         'name',
         'color',
-        'description'
+        'description',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 }

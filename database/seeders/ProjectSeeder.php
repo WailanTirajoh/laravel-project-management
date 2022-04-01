@@ -16,15 +16,13 @@ class ProjectSeeder extends Seeder
     public function run()
     {
         $projects = [
-            'Toko Daring Vendor',
-            'Toko Daring Admin',
-            'FJB Mandalika',
-            'Lentera Monitoring'
+            'My First Project',
         ];
 
-        foreach($projects as $project) {
+        foreach ($projects as $project) {
             Project::create([
-                'name' => $project
+                'created_by' => 1,
+                'name' => $project,
             ]);
         }
     }

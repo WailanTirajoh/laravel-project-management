@@ -18,27 +18,29 @@ class TaskStatusSeeder extends Seeder
         $statuses = [
             [
                 'name' => 'Created',
-                'color' => '#ffffff'
+                'color' => '#000000'
             ],
             [
                 'name' => 'On Progress',
-                'color' => '#ffffff'
+                'color' => '#000000'
             ],
             [
                 'name' => 'Done',
-                'color' => '#ffffff'
+                'color' => '#000000'
             ],
             [
                 'name' => 'On Hold',
-                'color' => '#ffffff'
+                'color' => '#000000'
             ],
             [
                 'name' => 'Cancel',
-                'color' => '#ffffff'
+                'color' => '#000000'
             ],
         ];
 
         foreach ($statuses as $status) {
+            $status['created_by'] = 1;
+            $status['project_id'] = 1;
             TaskStatus::create($status);
         }
     }

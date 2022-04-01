@@ -15,11 +15,15 @@ return new class extends Migration
     {
         Schema::create('project_task_statuses', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('project_id');
             $table->string('name');
             $table->string('color');
             $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
     }
 
