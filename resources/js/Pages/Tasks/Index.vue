@@ -6,9 +6,25 @@
 
     <div class="py-12 text-gray-600">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="flex justify-end mb-2 mr-2 md:hidden">
+          <button class="bg-white rounded p-2 shadow-sm" @click="showCreateEdit =!showCreateEdit">
+              <div class="font-semibold" v-if="form.task_id === 0">
+                <i class="fa-solid" :class="{
+                  'fa-eye-slash': showCreateEdit,
+                  'fa-eye': !showCreateEdit,
+                }"></i> Create Task
+              </div>
+              <div class="font-semibold" v-else>Edit Task</div>
+          </button>
+        </div>
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
           <div class="grid grid-cols-3 gap-4">
-            <div class="col-span-1 bg-gray-100 p-2 rounded-md border-0">
+            <div
+              class="col-span-4 md:col-span-1 bg-gray-100 p-2 rounded-md border-0 md:block" :class="{
+                'block': showCreateEdit,
+                'hidden': !showCreateEdit,
+              }"
+            >
               <div class="text-lg font-semibold" v-if="form.task_id === 0">
                 Create new task
               </div>
@@ -21,8 +37,12 @@
                     Project
                   </label>
                   <select
-                    @change="errors.project_id = null"
-                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                    @click="errors.project_id = null"
+                    class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 transition-all ease-in-out duration-300"
+                    :class="{
+                      'border-1 border-red-400': errors.project_id,
+                      'border-0': !errors.project_id,
+                    }"
                     v-model="form.project_id"
                     aria-placeholder="Select project"
                   >
@@ -48,7 +68,11 @@
                     id="name"
                     name="name"
                     type="text"
-                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                    class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                    :class="{
+                      'border-1 border-red-400': errors.name,
+                      'border-0': !errors.name,
+                    }"
                     placeholder="Type task name..."
                     @focus="errors.name = null"
                   />
@@ -62,7 +86,7 @@
                     Description
                   </label>
                   <div
-                    class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                    class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                   >
                     <quill-editor
                       ref="editor"
@@ -92,8 +116,12 @@
                       name="name"
                       type="datetime-local"
                       format
-                      class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                      class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
+                      :class="{
+                        'border-1 border-red-400': errors.project_id,
+                        'border-0': !errors.project_id,
+                      }"
                     />
                     <error-message
                       :errors="errors.start_date"
@@ -108,8 +136,12 @@
                       id="due"
                       name="name"
                       type="datetime-local"
-                      class="border-0 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                      class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
+                      :class="{
+                        'border-1 border-red-400': errors.project_id,
+                        'border-0': !errors.project_id,
+                      }"
                     />
                     <error-message
                       :errors="errors.due_date"
@@ -177,10 +209,14 @@
                 </div>
               </div>
             </div>
-            <div class="col-span-2 bg-gray-100 p-2 rounded-md border-0">
-              <div class="flex justify-between mx-2">
-                <h5 class="font-semibold text-lg text-center">Task Lists</h5>
-                <div class="flex gap-1">
+            <div
+              class="col-span-4 md:col-span-2 bg-gray-100 p-2 rounded-md border-0"
+            >
+              <div class="flex justify-between mx-2 gap-2">
+                <h5 class="font-semibold text-lg text-center whitespace-nowrap">
+                  Task Lists
+                </h5>
+                <div class="flex gap-1 overflow-x-auto">
                   <select
                     class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
                     v-model="sort.type_value"
@@ -226,7 +262,9 @@
                 </div>
               </div>
               <hr class="mb-2 mt-1" />
-              <div class="flex gap-2 mb-1 justify-end px-2">
+              <div
+                class="flex gap-2 mb-1 md:justify-end px-2 overflow-x-auto"
+              >
                 <div class="form-check">
                   <label
                     class="form-check-label border rounded p-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white transition-all ease-in-out duration-300"
@@ -254,7 +292,7 @@
                     :value="thestatus.id"
                   />
                   <label
-                    class="form-check-label border rounded p-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white"
+                    class="form-check-label border rounded p-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white whitespace-nowrap"
                     :for="`status-check-${thestatus.id}`"
                   >
                     {{ thestatus.name }} {{ totalStatus(thestatus.id) }}
@@ -282,10 +320,10 @@
                     <li
                       v-for="(task, index) in filteredTasks"
                       :key="task.id"
-                      class="grid grid-cols-4 gap-4"
+                      class="grid grid-cols-4 gap-2 gap-y-5"
                     >
                       <div
-                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-3 transition-all ease-in-out duration-300"
+                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-4 md:col-span-3 transition-all ease-in-out duration-300 cursor-grab active:cursor-grabbing task-sort"
                         :class="{
                           'bg-gray-100': form.task_id === task.id,
                           'shadow-md -translate-y-1': task.swapping,
@@ -361,7 +399,7 @@
                           ></div>
                         </div>
                       </div>
-                      <div class="text-xs">
+                      <div class="text-xs hidden md:block">
                         <div>
                           <div class="font-semibold">
                             {{ task.pic.name }}
@@ -397,6 +435,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import { errorHandler } from "@/Utils/error.js";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
 import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
@@ -464,6 +503,7 @@ export default defineComponent({
         type: ["Asc", "Desc"],
       },
       statuses: this.task_statuses,
+      showCreateEdit: false,
     };
   },
   computed: {
@@ -509,6 +549,7 @@ export default defineComponent({
 
         this.tasks = response.data.data;
       } catch (e) {
+        errorHandler(e);
       } finally {
         this.fetching = false;
       }
@@ -526,7 +567,7 @@ export default defineComponent({
           this.tasks.splice(removeIndex, 1);
         }
       } catch (e) {
-        alert(e.message);
+        errorHandler(e);
       } finally {
       }
     },
@@ -549,6 +590,7 @@ export default defineComponent({
 
     editTask(task_id) {
       const taskIndex = this.tasks.findIndex((task) => task.id === task_id);
+      this.showCreateEdit = true
       this.fillForm(this.tasks[taskIndex]);
       this.$refs.name.focus();
     },
@@ -563,8 +605,10 @@ export default defineComponent({
           this.tasks.push(task);
 
           this.resetForm();
+          this.showCreateEdit = false
         }
       } catch (e) {
+        errorHandler(e);
         if (e.response && e.response.data && e.response.data.errors) {
           this.errors = e.response.data.errors;
         }
@@ -590,8 +634,10 @@ export default defineComponent({
           this.tasks[taskIndex] = task;
 
           this.resetForm();
+          this.showCreateEdit = false
         }
       } catch (e) {
+        errorHandler(e);
         if (e.response && e.response.data && e.response.data.errors) {
           this.errors = e.response.data.errors;
         }
@@ -707,7 +753,7 @@ export default defineComponent({
           // Update status color
         }
       } catch (e) {
-        console.log(e);
+        errorHandler(e);
       }
     },
 
@@ -781,6 +827,4 @@ export default defineComponent({
   position: absolute;
 }
 .list-move {
-  transition: all 0.3s ease;
-}
-</style>
+  transition: all 0.4s ease;
