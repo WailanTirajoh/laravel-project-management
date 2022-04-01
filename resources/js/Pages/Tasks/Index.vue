@@ -285,16 +285,17 @@
                       class="grid grid-cols-4 gap-4"
                     >
                       <div
-                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-3 transition-all ease-in-out duration-300 cursor-grab active:cursor-grabbing task-sort"
+                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-3 transition-all ease-in-out duration-300"
                         :class="{
                           'bg-gray-100': form.task_id === task.id,
                           'shadow-md -translate-y-1': task.swapping,
+                          'cursor-grab active:cursor-grabbing task-sort': sortable,
                         }"
                         style="border-right: 0.25rem solid"
                         :style="{
                           'border-right-color': task.status.color,
                         }"
-                        draggable="true"
+                        :draggable="sortable"
                         @dragstart="dragStart(task, index, $event)"
                         @dragover="dragOver(task, index)"
                         @dragenter="dragEnter(task, index)"
@@ -349,9 +350,13 @@
                             </div>
                           </div>
                         </div>
-                        <div class="bg-gray-50 rounded-lg ql-snow">
+                        <div class="bg-gray-50 rounded-lg ql-snow relative group">
+                          <button @click="copy(task)" class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100">
+                            <i class="fa-solid fa-clone"></i>
+                          </button>
                           <div
                             class="ql-editor"
+                            :id="`description-${task.id}`"
                             v-html="task.description"
                           ></div>
                         </div>
@@ -453,7 +458,7 @@ export default defineComponent({
         },
       },
       sort: {
-        value: "Priority",
+        value: "Date",
         type_value: "Desc",
         fillable: ["Date", "Priority"],
         type: ["Asc", "Desc"],
@@ -479,6 +484,9 @@ export default defineComponent({
             ? new Date(b.due_date_default) - new Date(a.due_date_default)
             : new Date(a.due_date_default) - new Date(b.due_date_default);
         });
+    },
+    sortable() {
+      return this.sort.value === "Priority";
     },
   },
   watch: {
@@ -727,6 +735,19 @@ export default defineComponent({
         vm.errors[index] = null;
       });
     },
+
+    copy(task) {
+      const e = document.querySelector(`#description-${task.id}`);
+      const r = document.createRange();
+      const startIndex = 0;
+      r.setStart(e, startIndex);
+      r.setEnd(e, e.children.length);
+      const s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+      document.execCommand("copy")
+      s.removeAllRanges();
+    }
   },
   mounted() {
     this.getTasks();
