@@ -28,6 +28,14 @@
               </div>
               <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                 <jet-nav-link
+                  :href="route('view.projects.index')"
+                  :active="route().current('view.projects.index')"
+                >
+                  My Projects
+                </jet-nav-link>
+              </div>
+              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <jet-nav-link
                   :href="route('view.tasks.index')"
                   :active="route().current('view.tasks.index')"
                 >
@@ -253,6 +261,22 @@
               :active="route().current('dashboard')"
             >
               Dashboard
+            </jet-responsive-nav-link>
+          </div>
+          <div class="pt-2 pb-3 space-y-1">
+            <jet-responsive-nav-link
+              :href="route('view.projects.index')"
+              :active="route().current('view.projects.index')"
+            >
+              My Projects
+            </jet-responsive-nav-link>
+          </div>
+          <div class="pt-2 pb-3 space-y-1">
+            <jet-responsive-nav-link
+              :href="route('view.tasks.index')"
+              :active="route().current('view.tasks.index')"
+            >
+              My Tasks
             </jet-responsive-nav-link>
           </div>
 
