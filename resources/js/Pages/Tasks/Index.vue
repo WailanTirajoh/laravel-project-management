@@ -321,7 +321,7 @@
                     name="list"
                     class="text-xs"
                     v-if="filteredTasks.length > 0"
-                    appear=""
+                    appear
                   >
                     <li
                       v-for="(task, index) in filteredTasks"
@@ -818,7 +818,7 @@ export default defineComponent({
 <style scoped>
 .list-enter-from {
   opacity: 0;
-  transform: scale(0.6);
+  transform: translateY(1rem);
 }
 .list-enter-to {
   opacity: 1;
