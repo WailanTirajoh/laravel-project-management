@@ -6,23 +6,31 @@
 
     <div class="py-12 text-gray-600">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="flex justify-end mb-2 mr-2 md:hidden">
-          <button class="bg-white rounded p-2 shadow-sm" @click="showCreateEdit =!showCreateEdit">
-              <div class="font-semibold" v-if="form.task_id === 0">
-                <i class="fa-solid" :class="{
+        <div class="flex justify-end mb-2 mr-2 md:hidden">
+          <button
+            class="bg-white rounded p-2 shadow-sm"
+            @click="showCreateEdit = !showCreateEdit"
+          >
+            <div class="font-semibold" v-if="form.task_id === 0">
+              <i
+                class="fa-solid"
+                :class="{
                   'fa-eye-slash': showCreateEdit,
                   'fa-eye': !showCreateEdit,
-                }"></i> Create Task
-              </div>
-              <div class="font-semibold" v-else>Edit Task</div>
+                }"
+              ></i>
+              Create Task
+            </div>
+            <div class="font-semibold" v-else>Edit Task</div>
           </button>
         </div>
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
           <div class="grid grid-cols-3 gap-4">
             <div
-              class="col-span-4 md:col-span-1 bg-gray-100 p-2 rounded-md border-0 md:block" :class="{
-                'block': showCreateEdit,
-                'hidden': !showCreateEdit,
+              class="col-span-4 md:col-span-1 bg-gray-100 p-2 rounded-md border-0 md:block"
+              :class="{
+                block: showCreateEdit,
+                hidden: !showCreateEdit,
               }"
             >
               <div class="text-lg font-semibold" v-if="form.task_id === 0">
@@ -262,9 +270,7 @@
                 </div>
               </div>
               <hr class="mb-2 mt-1" />
-              <div
-                class="flex gap-2 mb-1 md:justify-end px-2 overflow-x-auto"
-              >
+              <div class="flex gap-2 mb-1 md:justify-end px-2 overflow-x-auto">
                 <div class="form-check">
                   <label
                     class="form-check-label border rounded p-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white transition-all ease-in-out duration-300"
@@ -327,7 +333,8 @@
                         :class="{
                           'bg-gray-100': form.task_id === task.id,
                           'shadow-md -translate-y-1': task.swapping,
-                          'cursor-grab active:cursor-grabbing task-sort': sortable,
+                          'cursor-grab active:cursor-grabbing task-sort':
+                            sortable,
                         }"
                         style="border-right: 0.25rem solid"
                         :style="{
@@ -388,8 +395,13 @@
                             </div>
                           </div>
                         </div>
-                        <div class="bg-gray-50 rounded-lg ql-snow relative group">
-                          <button @click="copy(task)" class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100">
+                        <div
+                          class="bg-gray-50 rounded-lg ql-snow relative group"
+                        >
+                          <button
+                            @click="copy(task)"
+                            class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100"
+                          >
                             <i class="fa-solid fa-clone"></i>
                           </button>
                           <div
@@ -590,7 +602,7 @@ export default defineComponent({
 
     editTask(task_id) {
       const taskIndex = this.tasks.findIndex((task) => task.id === task_id);
-      this.showCreateEdit = true
+      this.showCreateEdit = true;
       this.fillForm(this.tasks[taskIndex]);
       this.$refs.name.focus();
     },
@@ -605,13 +617,13 @@ export default defineComponent({
           this.tasks.push(task);
 
           this.resetForm();
-          this.showCreateEdit = false
+          this.showCreateEdit = false;
         }
       } catch (e) {
-        errorHandler(e);
         if (e.response && e.response.data && e.response.data.errors) {
-          this.errors = e.response.data.errors;
+          return (this.errors = e.response.data.errors);
         }
+        errorHandler(e);
       } finally {
         this.form.is_processing = false;
       }
@@ -634,13 +646,14 @@ export default defineComponent({
           this.tasks[taskIndex] = task;
 
           this.resetForm();
-          this.showCreateEdit = false
+          this.showCreateEdit = false;
         }
       } catch (e) {
-        errorHandler(e);
         if (e.response && e.response.data && e.response.data.errors) {
-          this.errors = e.response.data.errors;
+          return (this.errors = e.response.data.errors);
         }
+
+        errorHandler(e);
       } finally {
         this.form.is_processing = false;
       }
@@ -791,9 +804,9 @@ export default defineComponent({
       const s = window.getSelection();
       s.removeAllRanges();
       s.addRange(r);
-      document.execCommand("copy")
+      document.execCommand("copy");
       s.removeAllRanges();
-    }
+    },
   },
   mounted() {
     this.getTasks();
@@ -829,5 +842,4 @@ export default defineComponent({
 .list-move {
   transition: all 0.4s ease;
 }
-
 </style>
