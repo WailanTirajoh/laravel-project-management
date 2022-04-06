@@ -1,5 +1,12 @@
 <template>
   <app-layout title="Tasks">
+    <transition name="toast">
+      <toast
+        :message="toast.message"
+        :is-shown="toast.show"
+        :type="toast.type"
+      />
+    </transition>
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">My Task</h2>
     </template>
@@ -451,12 +458,14 @@ import { errorHandler } from "@/Utils/error.js";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
 import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
+import Toast from "@/Jetstream/Toast.vue";
 
 export default defineComponent({
   components: {
     AppLayout,
     JetLoadingCircleDots,
     ErrorMessage,
+    Toast,
   },
   props: {
     task_statuses: Array,
@@ -469,15 +478,12 @@ export default defineComponent({
         [{ font: [] }],
         ["bold", "italic", "underline", "strike"], // toggled buttons
         ["blockquote", "code-block"],
-
-        // [{ header: 1 }, { header: 2 }], // custom button values
         [{ list: "ordered" }, { list: "bullet" }],
         [{ script: "sub" }, { script: "super" }], // superscript/subscript
         [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
         [{ direction: "rtl" }], // text direction
         [{ color: [] }, { background: [] }], // dropdown with defaults from theme
         [{ align: [] }],
-
         ["clean"],
       ],
       form: {
@@ -513,6 +519,11 @@ export default defineComponent({
         type_value: "Desc",
         fillable: ["Date", "Priority"],
         type: ["Asc", "Desc"],
+      },
+      toast: {
+        show: false,
+        message: "",
+        type: "error",
       },
       statuses: this.task_statuses,
       showCreateEdit: false,
@@ -561,6 +572,7 @@ export default defineComponent({
 
         this.tasks = response.data.data;
       } catch (e) {
+        this.showToast({ message: data.message, type: "error" });
         errorHandler(e);
       } finally {
         this.fetching = false;
@@ -577,8 +589,10 @@ export default defineComponent({
           );
           this.resetForm();
           this.tasks.splice(removeIndex, 1);
+          this.showToast({ message: data.message, type: "success" });
         }
       } catch (e) {
+        this.showToast({ message: data.message, type: "error" });
         errorHandler(e);
       } finally {
       }
@@ -618,11 +632,13 @@ export default defineComponent({
 
           this.resetForm();
           this.showCreateEdit = false;
+          this.showToast({ message: data.message, type: "success" });
         }
       } catch (e) {
         if (e.response && e.response.data && e.response.data.errors) {
           return (this.errors = e.response.data.errors);
         }
+        this.showToast({ message: data.message, type: "error" });
         errorHandler(e);
       } finally {
         this.form.is_processing = false;
@@ -647,12 +663,14 @@ export default defineComponent({
 
           this.resetForm();
           this.showCreateEdit = false;
+          this.showToast({ message: data.message, type: "success" });
         }
       } catch (e) {
         if (e.response && e.response.data && e.response.data.errors) {
           return (this.errors = e.response.data.errors);
         }
 
+        this.showToast({ message: data.message, type: "error" });
         errorHandler(e);
       } finally {
         this.form.is_processing = false;
@@ -763,9 +781,10 @@ export default defineComponent({
         });
 
         if (status === 200) {
-          // Update status color
+          this.showToast({ message: data.message, type: "success" });
         }
       } catch (e) {
+        this.showToast({ message: data.message, type: "error" });
         errorHandler(e);
       }
     },
@@ -806,6 +825,27 @@ export default defineComponent({
       s.addRange(r);
       document.execCommand("copy");
       s.removeAllRanges();
+
+      this.showToast({ message: "Text copied", type: "success" });
+    },
+
+    showToast({ message, type }) {
+      this.toast.show = true;
+      this.toast.message = message;
+      this.toast.type = type;
+      this.hideToast();
+    },
+
+    async hideToast() {
+      await this.wait(2000);
+      this.toast.show = false;
+      (this.toast.message = null), (this.toast.type = null);
+    },
+
+    wait(timeout) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, timeout);
+      });
     },
   },
   mounted() {
@@ -841,5 +881,21 @@ export default defineComponent({
 }
 .list-move {
   transition: all 0.4s ease;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateY(-60px);
+}
+.toast-enter-active {
+  transition: all 0.3s ease;
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-60px);
+}
+.toast-leave-active {
+  transition: all 0.3s ease;
 }
 </style>
