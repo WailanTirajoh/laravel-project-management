@@ -53,6 +53,7 @@
                   </label>
                   <select
                     @click="errors.project_id = null"
+                    @change="form.parent_id = null"
                     class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 transition-all ease-in-out duration-300"
                     :class="{
                       'border-1 border-red-400': errors.project_id,
@@ -73,6 +74,35 @@
                   <error-message
                     :errors="errors.project_id"
                     @remove-error="errors.project_id = null"
+                  />
+                </div>
+                <div class="mb-2 tooltip">
+                  <label for="name" class="text-xs text-gray-700">
+                    Parent Task
+                  </label>
+                  <select
+                    @click="errors.parent_id = null"
+                    class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 transition-all ease-in-out duration-300"
+                    :class="{
+                      'border-1 border-red-400': errors.parent_id,
+                      'border-0': !errors.parent_id,
+                    }"
+                    v-model="form.parent_id"
+                    aria-placeholder="Select project"
+                  >
+                    <option class="text-xs" :value="null">None</option>
+                    <option
+                      class="text-xs"
+                      v-for="task in filteredParentTasks"
+                      :key="task.id"
+                      :value="task.id"
+                    >
+                      {{ task.name }}
+                    </option>
+                  </select>
+                  <error-message
+                    :errors="errors.parent_id"
+                    @remove-error="errors.parent_id = null"
                   />
                 </div>
                 <div class="mb-2 tooltip">
@@ -134,8 +164,8 @@
                       class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
                       :class="{
-                        'border-1 border-red-400': errors.project_id,
-                        'border-0': !errors.project_id,
+                        'border-1 border-red-400': errors.start_date,
+                        'border-0': !errors.start_date,
                       }"
                     />
                     <error-message
@@ -154,8 +184,8 @@
                       class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
                       placeholder="Type task name..."
                       :class="{
-                        'border-1 border-red-400': errors.project_id,
-                        'border-0': !errors.project_id,
+                        'border-1 border-red-400': errors.due_date,
+                        'border-0': !errors.due_date,
                       }"
                     />
                     <error-message
@@ -335,87 +365,108 @@
                       :key="task.id"
                       class="grid grid-cols-4 gap-2 gap-y-5"
                     >
-                      <div
-                        class="relative bg-white rounded-md p-2 px-4 mb-2 col-span-4 md:col-span-3 transition-all ease-in-out duration-300"
-                        :class="{
-                          'bg-gray-100': form.task_id === task.id,
-                          'shadow-md -translate-y-1': task.swapping,
-                          'cursor-grab active:cursor-grabbing task-sort':
-                            sortable,
-                        }"
-                        style="border-right: 0.25rem solid"
-                        :style="{
-                          'border-right-color': task.status.color,
-                        }"
-                        :draggable="sortable"
-                        @dragstart="dragStart(task, index, $event)"
-                        @dragover="dragOver(task, index)"
-                        @dragenter="dragEnter(task, index)"
-                        @dragleave="dragLeave(task, index)"
-                        @drop="dragDrop(task, index)"
-                        @dragover.prevent
-                        @dragenter.prevent
-                        :data-index="index"
-                        :data-id="task.id"
-                      >
-                        <button
-                          v-if="form.task_id === task.id"
-                          @click="cancelEdit(task.id)"
-                          class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                      <div class="col-span-4 md:col-span-3 group">
+                        <div
+                          class="relative bg-white rounded-md p-2 px-4 mb-1 transition-all ease-in-out duration-300 task-list group-hover:shadow-md"
+                          :class="{
+                            'bg-gray-100': form.task_id === task.id,
+                            'shadow-md -translate-y-1': task.swapping,
+                            'cursor-grab active:cursor-grabbing task-sort':
+                              sortable,
+                          }"
+                          style="border-right: 0.25rem solid"
+                          :style="{
+                            'border-right-color': task.status.color,
+                          }"
+                          :draggable="sortable"
+                          @dragstart="dragStart(task, index, $event)"
+                          @dragover="dragOver(task, index)"
+                          @dragenter="dragEnter(task, index)"
+                          @dragleave="dragLeave(task, index)"
+                          @drop="dragDrop(task, index)"
+                          @dragover.prevent
+                          @dragenter.prevent
+                          :data-index="index"
+                          :data-id="task.id"
                         >
-                          <i class="fa-solid fa-xmark"></i>
-                        </button>
-                        <button
-                          v-else
-                          @click="editTask(task.id)"
-                          class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
-                        >
-                          <i class="fa-solid fa-pencil"></i>
-                        </button>
-                        <div class="flex gap-1 justify-between mb-1">
-                          <div class="flex items-center">
-                            {{ task.name }}
-                          </div>
-                          <div class="flex gap-1">
-                            <div
-                              class="p-1 rounded text-xs border text-xs flex items-center gap-2"
-                            >
-                              <input
-                                :ref="`color_${task.status.id}_${index}`"
-                                type="color"
-                                id="favcolor"
-                                class="w-4 h-4 rounded color-input"
-                                name="favcolor"
-                                :value="task.status.color"
-                                @change="
-                                  updateStatusColor(
-                                    `color_${task.status.id}_${index}`
-                                  )
-                                "
-                                @input="
-                                  liveUpdateDomStatusColor(
-                                    `color_${task.status.id}_${index}`
-                                  )
-                                "
-                              />
-                              {{ task.status.name }}
+                          <button
+                            v-if="form.task_id === task.id"
+                            @click="cancelEdit(task.id)"
+                            class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                          >
+                            <i class="fa-solid fa-xmark"></i>
+                          </button>
+                          <button
+                            v-else
+                            @click="editTask(task.id)"
+                            class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                          >
+                            <i class="fa-solid fa-pencil"></i>
+                          </button>
+                          <div class="flex gap-1 justify-between mb-1">
+                            <div class="flex items-center">
+                              {{ task.name }}
                             </div>
+                            <div class="flex gap-1">
+                              <div
+                                class="p-1 rounded text-xs border text-xs flex items-center gap-2"
+                              >
+                                <input
+                                  :ref="`color_${task.status.id}_${index}`"
+                                  type="color"
+                                  id="favcolor"
+                                  class="w-4 h-4 rounded color-input"
+                                  name="favcolor"
+                                  :value="task.status.color"
+                                  @change="
+                                    updateStatusColor(
+                                      `color_${task.status.id}_${index}`
+                                    )
+                                  "
+                                  @input="
+                                    liveUpdateDomStatusColor(
+                                      `color_${task.status.id}_${index}`
+                                    )
+                                  "
+                                />
+                                {{ task.status.name }}
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            class="bg-gray-50 rounded-lg ql-snow relative group"
+                          >
+                            <button
+                              @click="copy(task)"
+                              class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100"
+                            >
+                              <i class="fa-solid fa-clone"></i>
+                            </button>
+                            <div
+                              class="ql-editor"
+                              :id="`description-${task.id}`"
+                              v-html="task.description"
+                            ></div>
                           </div>
                         </div>
                         <div
-                          class="bg-gray-50 rounded-lg ql-snow relative group"
+                          class="flex justify-end opacity-0 group-hover:opacity-100 transition-all ease-in-out duration-300 mb-4"
                         >
                           <button
-                            @click="copy(task)"
-                            class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100"
+                            class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
                           >
-                            <i class="fa-solid fa-clone"></i>
+                            <i class="fa-solid fa-thumbtack"></i> pin
                           </button>
-                          <div
-                            class="ql-editor"
-                            :id="`description-${task.id}`"
-                            v-html="task.description"
-                          ></div>
+                          <button
+                            class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
+                          >
+                            <i class="fa-solid fa-face-smile"></i> react
+                          </button>
+                          <button
+                            class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-5 z-10"
+                          >
+                            <i class="fa-solid fa-reply"></i> reply
+                          </button>
                         </div>
                       </div>
                       <div class="text-xs hidden md:block">
@@ -495,6 +546,7 @@ export default defineComponent({
         project_id: null,
         start_date: null,
         due_date: null,
+        parent_id: null,
       },
       errors: {
         name: null,
@@ -503,6 +555,7 @@ export default defineComponent({
         project_id: null,
         start_date: null,
         due_date: null,
+        parent_id: null,
       },
       project_id: "All",
       status: [],
@@ -547,6 +600,14 @@ export default defineComponent({
             ? new Date(b.due_date_default) - new Date(a.due_date_default)
             : new Date(a.due_date_default) - new Date(b.due_date_default);
         });
+    },
+    filteredParentTasks() {
+      let vm = this;
+      return this.tasks.filter((task) => {
+        if (this.form.project_id == null) return true;
+
+        return task.project_id === this.form.project_id;
+      });
     },
     sortable() {
       return this.sort.value === "Priority";
@@ -636,9 +697,9 @@ export default defineComponent({
         }
       } catch (e) {
         if (e.response && e.response.data && e.response.data.errors) {
+          this.showToast({ message: e.response.data.message, type: "error" });
           return (this.errors = e.response.data.errors);
         }
-        this.showToast({ message: data.message, type: "error" });
         errorHandler(e);
       } finally {
         this.form.is_processing = false;
@@ -667,10 +728,9 @@ export default defineComponent({
         }
       } catch (e) {
         if (e.response && e.response.data && e.response.data.errors) {
+          this.showToast({ message: e.response.data.message, type: "error" });
           return (this.errors = e.response.data.errors);
         }
-
-        this.showToast({ message: data.message, type: "error" });
         errorHandler(e);
       } finally {
         this.form.is_processing = false;
@@ -680,6 +740,7 @@ export default defineComponent({
     fillForm(task) {
       this.resetErrors();
       this.form.task_id = task.id;
+      this.form.parent_id = task.parent_id;
       this.form.name = task.name;
       this.form.description = task.description;
       this.form.status_id = task.status.id;
@@ -839,7 +900,8 @@ export default defineComponent({
     async hideToast() {
       await this.wait(2000);
       this.toast.show = false;
-      (this.toast.message = null), (this.toast.type = null);
+      this.toast.message = "";
+      this.toast.type = "success";
     },
 
     wait(timeout) {
@@ -897,5 +959,23 @@ export default defineComponent({
 }
 .toast-leave-active {
   transition: all 0.3s ease;
+}
+
+.group .task-list::after {
+  content: "";
+  opacity: 0;
+  position: absolute;
+  right: 0.15rem;
+  bottom: -1.15rem;
+  border-right: 0.175rem solid pink;
+  border-bottom: 0.175rem solid pink;
+  transition: all 300ms ease;
+  height: 1.15rem;
+  width: 12.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.group:hover .task-list::after {
+  opacity: 1;
 }
 </style>

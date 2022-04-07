@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api;
 
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\TaskStatus;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -40,7 +41,7 @@ class StoreTaskRequest extends FormRequest
             ],
             'status_id' => [
                 'required',
-                'in:' . implode(',',TaskStatus::all()->pluck('id')->toArray())
+                'in:' . implode(',', TaskStatus::all()->pluck('id')->toArray())
             ],
             'start_date' => [
                 'required',
@@ -50,6 +51,10 @@ class StoreTaskRequest extends FormRequest
                 'required',
                 'date'
             ],
+            'parent_id' => [
+                'nullable',
+                'in:' . implode(',', Task::where('project_id', $this->request->get('project_id'))->pluck('id')->toArray())
+            ]
         ];
     }
 }

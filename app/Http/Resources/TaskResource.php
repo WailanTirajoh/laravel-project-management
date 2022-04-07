@@ -22,6 +22,7 @@ class TaskResource extends JsonResource
             'pic' => $this->pic,
             'status_id' => $this->status_id,
             'project_id' => $this->project_id,
+            'parent_id' => $this->task_id,
             'status' => $this->status,
             'project' => $this->project,
             'sort' => $this->sort,

@@ -21,7 +21,7 @@ class ProjectResource extends JsonResource
             'status' => []
         ];
 
-        $statuses = TaskStatus::get();
+        $statuses = $this->statuses;
         $i = 0;
         foreach ($statuses as $status) {
             $data['status'][$i]['detail'] = StatusResource::make($status);

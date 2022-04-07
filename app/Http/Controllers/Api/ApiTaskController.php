@@ -30,6 +30,7 @@ class ApiTaskController extends Controller
 
             $lastTask = Task::orderBy('sort', 'desc')->first();
             $task = new Task();
+            $task->task_id = $request->parent_id;
             $task->pic_id = Auth::user()->id;
             $task->name = $request->name;
             $task->description = $request->description;
@@ -60,6 +61,7 @@ class ApiTaskController extends Controller
         try {
             DB::beginTransaction();
 
+            $task->task_id = $request->parent_id;
             $task->name = $request->name;
             $task->description = $request->description;
             $task->status_id = $request->status_id;

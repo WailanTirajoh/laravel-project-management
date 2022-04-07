@@ -1,7 +1,7 @@
 <template>
   <div class="fixed top-10 left-1/2" v-if="isShown">
     <div
-      class="p-3 text-white rounded-3xl px-5 shadow bg-opacity-80"
+      class="p-3 text-white rounded-3xl px-5 shadow bg-opacity-95"
       :class="classType"
     >
       {{ message }}
@@ -37,13 +37,11 @@ export default {
     classType() {
       switch (this.templateType) {
         case "success":
-          return { "bg-green-500": true };
-          break;
+          return { "bg-green-400": true };
         case "error":
-          return { "bg-red-500": true };
-          break;
+          return { "bg-red-400": true };
         default:
-          return { "bg-green-500": true };
+          return { "bg-green-400": true };
       }
     },
   },
