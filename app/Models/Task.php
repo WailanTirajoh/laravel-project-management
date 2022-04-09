@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
@@ -13,17 +14,17 @@ class Task extends Model
 
     protected $table = 'project_tasks';
 
-    public function pic()
+    public function pic(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pic_id');
     }
 
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo(TaskStatus::class, 'status_id');
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'project_id');
     }
