@@ -1,12 +1,14 @@
 <template>
-  <div class="fixed top-10 left-1/2" v-if="isShown">
-    <div
-      class="p-3 text-white rounded-3xl px-5 shadow bg-opacity-95"
-      :class="classType"
-    >
-      {{ message }}
+  <transition name="toast">
+    <div class="fixed top-10 left-1/2" v-if="isShown">
+      <div
+        class="p-3 text-white rounded-3xl px-5 shadow bg-opacity-95"
+        :class="classType"
+      >
+        {{ message }}
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -35,17 +37,33 @@ export default {
   },
   computed: {
     classType() {
-      switch (this.templateType) {
+      switch (this.type) {
         case "success":
-          return { "bg-green-400": true };
+          return { "bg-green-600": true };
         case "error":
-          return { "bg-red-400": true };
+          return { "bg-red-600": true };
         default:
-          return { "bg-green-400": true };
+          return { "bg-green-600": true };
       }
     },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.toast-enter-from {
+  opacity: 0;
+  transform: translateY(-60px);
+}
+.toast-enter-active {
+  transition: all 0.5s ease;
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-60px);
+}
+.toast-leave-active {
+  transition: all 0.5s ease;
+}
+</style>

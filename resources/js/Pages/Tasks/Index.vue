@@ -1,12 +1,6 @@
 <template>
   <app-layout title="Tasks">
-    <transition name="toast">
-      <toast
-        :message="toast.message"
-        :is-shown="toast.show"
-        :type="toast.type"
-      />
-    </transition>
+    <toast :message="toast.message" :is-shown="toast.show" :type="toast.type" />
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">My Task</h2>
     </template>
@@ -346,154 +340,161 @@
                 class="overflow-y-auto bg-gray-50 rounded-2xl p-2"
                 style="height: 36rem"
               >
-                <div
-                  v-if="fetching"
-                  class="h-full w-full flex items-center justify-center"
-                >
-                  <jet-loading-circle-dots class="w-20 h-20" />
-                </div>
-                <div class="h-full p-2" v-else>
-                  <transition-group
-                    tag="ul"
-                    name="list"
-                    class="text-xs"
-                    v-if="filteredTasks.length > 0"
-                    appear
+                <transition name="switch" mode="out-in">
+                  <div
+                    v-if="fetching"
+                    class="h-full w-full flex items-center justify-center"
                   >
-                    <li
-                      v-for="(task, index) in filteredTasks"
-                      :key="task.id"
-                      class="grid grid-cols-4 gap-2 gap-y-5"
-                    >
-                      <div class="col-span-4 md:col-span-3 group">
-                        <div
-                          class="relative bg-white rounded-md p-2 px-4 mb-1 transition-all ease-in-out duration-300 task-list group-hover:shadow-md"
-                          :class="{
-                            'bg-gray-100': form.task_id === task.id,
-                            'shadow-md -translate-y-1': task.swapping,
-                            'cursor-grab active:cursor-grabbing task-sort':
-                              sortable,
-                          }"
-                          style="border-right: 0.25rem solid"
-                          :style="{
-                            'border-right-color': task.status.color,
-                          }"
-                          :draggable="sortable"
-                          @dragstart="dragStart(task, index, $event)"
-                          @dragover="dragOver(task, index)"
-                          @dragenter="dragEnter(task, index)"
-                          @dragleave="dragLeave(task, index)"
-                          @drop="dragDrop(task, index)"
-                          @dragover.prevent
-                          @dragenter.prevent
-                          :data-index="index"
-                          :data-id="task.id"
+                    <jet-loading-circle-dots class="w-20 h-20" />
+                  </div>
+                  <div class="h-full p-2" v-else>
+                    <transition name="switch" mode="out-in">
+                      <transition-group
+                        tag="ul"
+                        name="list"
+                        class="text-xs"
+                        v-if="filteredTasks.length > 0"
+                        appear
+                      >
+                        <li
+                          v-for="(task, index) in filteredTasks"
+                          :key="task.id"
+                          class="grid grid-cols-4 gap-2 gap-y-5"
                         >
-                          <button
-                            v-if="form.task_id === task.id"
-                            @click="cancelEdit(task.id)"
-                            class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
-                          >
-                            <i class="fa-solid fa-xmark"></i>
-                          </button>
-                          <button
-                            v-else
-                            @click="editTask(task.id)"
-                            class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
-                          >
-                            <i class="fa-solid fa-pencil"></i>
-                          </button>
-                          <div class="flex gap-1 justify-between mb-1">
-                            <div class="flex items-center">
-                              {{ task.name }}
-                            </div>
-                            <div class="flex gap-1">
-                              <div
-                                class="p-1 rounded text-xs border text-xs flex items-center gap-2"
+                          <div class="col-span-4 md:col-span-3 group">
+                            <div
+                              class="relative bg-white rounded-md p-2 px-4 mb-1 transition-all ease-in-out duration-300 task-list group-hover:shadow-md"
+                              :class="{
+                                'bg-gray-100': form.task_id === task.id,
+                                'shadow-md -translate-y-1': task.swapping,
+                                'cursor-grab active:cursor-grabbing task-sort':
+                                  sortable,
+                              }"
+                              style="border-right: 0.25rem solid"
+                              :style="{
+                                'border-right-color': task.status.color,
+                              }"
+                              :draggable="sortable"
+                              @dragstart="dragStart(task, index, $event)"
+                              @dragover="dragOver(task, index)"
+                              @dragenter="dragEnter(task, index)"
+                              @dragleave="dragLeave(task, index)"
+                              @drop="dragDrop(task, index)"
+                              @dragover.prevent
+                              @dragenter.prevent
+                              :data-index="index"
+                              :data-id="task.id"
+                            >
+                              <button
+                                v-if="form.task_id === task.id"
+                                @click="cancelEdit(task.id)"
+                                class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
                               >
-                                <input
-                                  :ref="`color_${task.status.id}_${index}`"
-                                  type="color"
-                                  id="favcolor"
-                                  class="w-4 h-4 rounded color-input"
-                                  name="favcolor"
-                                  :value="task.status.color"
-                                  @change="
-                                    updateStatusColor(
-                                      `color_${task.status.id}_${index}`
-                                    )
-                                  "
-                                  @input="
-                                    liveUpdateDomStatusColor(
-                                      `color_${task.status.id}_${index}`
-                                    )
-                                  "
-                                />
-                                {{ task.status.name }}
+                                <i class="fa-solid fa-xmark"></i>
+                              </button>
+                              <button
+                                v-else
+                                @click="editTask(task.id)"
+                                class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                              >
+                                <i class="fa-solid fa-pencil"></i>
+                              </button>
+                              <div class="flex gap-1 justify-between mb-1">
+                                <div class="flex items-center">
+                                  {{ task.name }}
+                                </div>
+                                <div class="flex gap-1">
+                                  <div
+                                    class="p-1 rounded text-xs border text-xs flex items-center gap-2"
+                                  >
+                                    <input
+                                      :ref="`color_${task.status.id}_${index}`"
+                                      type="color"
+                                      id="favcolor"
+                                      class="w-4 h-4 rounded color-input"
+                                      name="favcolor"
+                                      :value="task.status.color"
+                                      @change="
+                                        updateStatusColor(
+                                          `color_${task.status.id}_${index}`
+                                        )
+                                      "
+                                      @input="
+                                        liveUpdateDomStatusColor(
+                                          `color_${task.status.id}_${index}`
+                                        )
+                                      "
+                                    />
+                                    {{ task.status.name }}
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class="bg-gray-50 rounded-lg ql-snow relative group"
+                              >
+                                <button
+                                  @click="copy(task)"
+                                  class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100"
+                                >
+                                  <i class="fa-solid fa-clone"></i>
+                                </button>
+                                <div
+                                  class="ql-editor"
+                                  :id="`description-${task.id}`"
+                                  v-html="task.description"
+                                ></div>
+                              </div>
+                            </div>
+                            <div
+                              class="flex justify-end opacity-0 group-hover:opacity-100 transition-all ease-in-out duration-300 mb-4"
+                            >
+                              <button
+                                class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
+                              >
+                                <i class="fa-solid fa-thumbtack"></i> pin
+                              </button>
+                              <button
+                                class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
+                              >
+                                <i class="fa-solid fa-face-smile"></i> react
+                              </button>
+                              <button
+                                class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-5 z-10"
+                              >
+                                <i class="fa-solid fa-reply"></i> reply
+                              </button>
+                            </div>
+                          </div>
+                          <div class="text-xs hidden md:block">
+                            <div>
+                              <div class="font-semibold">
+                                {{ task.pic.name }}
+                              </div>
+                              <div class="font-thin">
+                                {{ task.project.name }}
+                              </div>
+                              <!-- <div class="font-thin text-gray-500">
+                              {{ task.due_date_date }}
+                            </div>
+                            <div class="font-thin text-gray-500">
+                              {{ task.due_date_hour }}
+                            </div> -->
+                              <div class="font-thin text-gray-500">
+                                {{ task.due_left }}
                               </div>
                             </div>
                           </div>
-                          <div
-                            class="bg-gray-50 rounded-lg ql-snow relative group"
-                          >
-                            <button
-                              @click="copy(task)"
-                              class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100"
-                            >
-                              <i class="fa-solid fa-clone"></i>
-                            </button>
-                            <div
-                              class="ql-editor"
-                              :id="`description-${task.id}`"
-                              v-html="task.description"
-                            ></div>
-                          </div>
-                        </div>
-                        <div
-                          class="flex justify-end opacity-0 group-hover:opacity-100 transition-all ease-in-out duration-300 mb-4"
-                        >
-                          <button
-                            class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
-                          >
-                            <i class="fa-solid fa-thumbtack"></i> pin
-                          </button>
-                          <button
-                            class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
-                          >
-                            <i class="fa-solid fa-face-smile"></i> react
-                          </button>
-                          <button
-                            class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-5 z-10"
-                          >
-                            <i class="fa-solid fa-reply"></i> reply
-                          </button>
-                        </div>
+                        </li>
+                      </transition-group>
+                      <div
+                        class="h-full flex justify-center items-center"
+                        v-else
+                      >
+                        No Data
                       </div>
-                      <div class="text-xs hidden md:block">
-                        <div>
-                          <div class="font-semibold">
-                            {{ task.pic.name }}
-                          </div>
-                          <div class="font-thin">
-                            {{ task.project.name }}
-                          </div>
-                          <!-- <div class="font-thin text-gray-500">
-                            {{ task.due_date_date }}
-                          </div>
-                          <div class="font-thin text-gray-500">
-                            {{ task.due_date_hour }}
-                          </div> -->
-                          <div class="font-thin text-gray-500">
-                            {{ task.due_left }}
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  </transition-group>
-                  <div class="h-full flex justify-center items-center" v-else>
-                    No Data
+                    </transition>
                   </div>
-                </div>
+                </transition>
               </div>
             </div>
           </div>
@@ -945,22 +946,6 @@ export default defineComponent({
   transition: all 0.4s ease;
 }
 
-.toast-enter-from {
-  opacity: 0;
-  transform: translateY(-60px);
-}
-.toast-enter-active {
-  transition: all 0.3s ease;
-}
-
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(-60px);
-}
-.toast-leave-active {
-  transition: all 0.3s ease;
-}
-
 .group .task-list::after {
   content: "";
   opacity: 0;
@@ -978,4 +963,28 @@ export default defineComponent({
 .group:hover .task-list::after {
   opacity: 1;
 }
+
+/* switch transition */
+
+.switch-enter-from,
+.switch-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.switch-enter-to,
+.switch-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.switch-enter-active {
+  transition: all 0.5s ease;
+}
+
+.switch-leave-active {
+  transition: all 0.5s ease;
+}
+
+/* end switch */
 </style>
