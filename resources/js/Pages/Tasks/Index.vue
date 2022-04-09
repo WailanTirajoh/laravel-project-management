@@ -7,250 +7,239 @@
 
     <div class="py-12 text-gray-600">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="flex justify-end mb-2 mr-2 md:hidden">
-          <button
-            class="bg-white rounded p-2 shadow-sm"
-            @click="showCreateEdit = !showCreateEdit"
-          >
-            <div class="font-semibold" v-if="form.task_id === 0">
-              <i
-                class="fa-solid"
-                :class="{
-                  'fa-eye-slash': showCreateEdit,
-                  'fa-eye': !showCreateEdit,
-                }"
-              ></i>
-              Create Task
-            </div>
-            <div class="font-semibold" v-else>Edit Task</div>
-          </button>
-        </div>
-        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
-          <div class="grid grid-cols-3 gap-4">
-            <div
-              class="col-span-4 md:col-span-1 bg-gray-100 p-2 rounded-md border-0 md:block"
-              :class="{
-                block: showCreateEdit,
-                hidden: !showCreateEdit,
-              }"
+        <cust-off-canvas ref="custCanvas" @on-close="resetForm()">
+          <template #button>
+            <button
+              class="bg-white rounded p-2 shadow-sm mb-2"
+              ref="openCanvas"
             >
+              <div class="font-semibold">
+                <i class="fa-solid fa-plus"></i>
+              </div>
+            </button>
+          </template>
+          <template #header>
+            <div class="" ref="closeCanvas">
               <div class="text-lg font-semibold" v-if="form.task_id === 0">
                 Create new task
               </div>
               <div class="text-lg font-semibold" v-else>Edit task</div>
-              <hr class="mt-1 mb-2" />
-              <div>
-                <input type="hidden" v-model="form.task_id" />
-                <div class="mb-2 tooltip">
-                  <label for="name" class="text-xs text-gray-700">
-                    Project
-                  </label>
-                  <select
-                    @click="errors.project_id = null"
-                    @change="form.parent_id = null"
-                    class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 transition-all ease-in-out duration-300"
-                    :class="{
-                      'border-1 border-red-400': errors.project_id,
-                      'border-0': !errors.project_id,
-                    }"
-                    v-model="form.project_id"
-                    aria-placeholder="Select project"
+            </div>
+          </template>
+          <div class="bg-gray-100 p-2 rounded-md border-0 md:block">
+            <div>
+              <input type="hidden" v-model="form.task_id" />
+              <div class="mb-2 tooltip">
+                <label for="name" class="text-xs text-gray-700">
+                  Project
+                </label>
+                <select
+                  @click="errors.project_id = null"
+                  @change="form.parent_id = null"
+                  class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 transition-all ease-in-out duration-300"
+                  :class="{
+                    'border-1 border-red-400': errors.project_id,
+                    'border-0': !errors.project_id,
+                  }"
+                  v-model="form.project_id"
+                  aria-placeholder="Select project"
+                >
+                  <option
+                    class="text-xs"
+                    v-for="project in projects"
+                    :key="project.id"
+                    :value="project.id"
                   >
-                    <option
-                      class="text-xs"
-                      v-for="project in projects"
-                      :key="project.id"
-                      :value="project.id"
-                    >
-                      {{ project.name }}
-                    </option>
-                  </select>
-                  <error-message
-                    :errors="errors.project_id"
-                    @remove-error="errors.project_id = null"
-                  />
-                </div>
-                <div class="mb-2 tooltip">
-                  <label for="name" class="text-xs text-gray-700">
-                    Parent Task
-                  </label>
-                  <select
-                    @click="errors.parent_id = null"
-                    class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 transition-all ease-in-out duration-300"
-                    :class="{
-                      'border-1 border-red-400': errors.parent_id,
-                      'border-0': !errors.parent_id,
-                    }"
-                    v-model="form.parent_id"
-                    aria-placeholder="Select project"
+                    {{ project.name }}
+                  </option>
+                </select>
+                <error-message
+                  :errors="errors.project_id"
+                  @remove-error="errors.project_id = null"
+                />
+              </div>
+              <div class="mb-2 tooltip">
+                <label for="name" class="text-xs text-gray-700">
+                  Parent Task
+                </label>
+                <select
+                  @click="errors.parent_id = null"
+                  class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 transition-all ease-in-out duration-300"
+                  :class="{
+                    'border-1 border-red-400': errors.parent_id,
+                    'border-0': !errors.parent_id,
+                  }"
+                  v-model="form.parent_id"
+                  aria-placeholder="Select project"
+                >
+                  <option class="text-xs" :value="null">None</option>
+                  <option
+                    class="text-xs"
+                    v-for="task in filteredParentTasks"
+                    :key="task.id"
+                    :value="task.id"
                   >
-                    <option class="text-xs" :value="null">None</option>
-                    <option
-                      class="text-xs"
-                      v-for="task in filteredParentTasks"
-                      :key="task.id"
-                      :value="task.id"
-                    >
-                      {{ task.name }}
-                    </option>
-                  </select>
-                  <error-message
-                    :errors="errors.parent_id"
-                    @remove-error="errors.parent_id = null"
-                  />
+                    {{ task.name }}
+                  </option>
+                </select>
+                <error-message
+                  :errors="errors.parent_id"
+                  @remove-error="errors.parent_id = null"
+                />
+              </div>
+              <div class="mb-2 tooltip">
+                <label for="name" class="text-xs text-gray-700"> Name </label>
+                <input
+                  v-model="form.name"
+                  ref="name"
+                  id="name"
+                  name="name"
+                  type="text"
+                  class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                  :class="{
+                    'border-1 border-red-400': errors.name,
+                    'border-0': !errors.name,
+                  }"
+                  placeholder="Type task name..."
+                  @focus="errors.name = null"
+                />
+                <error-message
+                  :errors="errors.name"
+                  @remove-error="errors.name = null"
+                />
+              </div>
+              <div class="mb-2 tooltip">
+                <label for="description" class="text-xs text-gray-700">
+                  Description
+                </label>
+                <div
+                  class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
+                >
+                  <quill-editor
+                    ref="editor"
+                    @focus="errors.description = null"
+                    v-model:content="form.description"
+                    content-type="html"
+                    theme="snow"
+                    placeholder="Type task description..."
+                    rows="8"
+                    :toolbar="toolbar"
+                  ></quill-editor>
                 </div>
-                <div class="mb-2 tooltip">
-                  <label for="name" class="text-xs text-gray-700"> Name </label>
+                <error-message
+                  :errors="errors.description"
+                  @remove-error="errors.description = null"
+                />
+              </div>
+              <div class="grid grid-cols-2 mb-2 gap-2">
+                <div class="col-span-1 tooltip">
+                  <label for="start" class="text-xs text-gray-700">
+                    Start
+                  </label>
                   <input
-                    v-model="form.name"
-                    ref="name"
-                    id="name"
+                    v-model="form.start_date"
+                    @focus="errors.start_date = null"
+                    id="start"
                     name="name"
-                    type="text"
+                    type="datetime-local"
+                    format
                     class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
-                    :class="{
-                      'border-1 border-red-400': errors.name,
-                      'border-0': !errors.name,
-                    }"
                     placeholder="Type task name..."
-                    @focus="errors.name = null"
+                    :class="{
+                      'border-1 border-red-400': errors.start_date,
+                      'border-0': !errors.start_date,
+                    }"
                   />
                   <error-message
-                    :errors="errors.name"
-                    @remove-error="errors.name = null"
+                    :errors="errors.start_date"
+                    @remove-error="errors.start_date = null"
                   />
                 </div>
-                <div class="mb-2 tooltip">
-                  <label for="description" class="text-xs text-gray-700">
-                    Description
-                  </label>
-                  <div
+                <div class="col-span-1 tooltip">
+                  <label for="due" class="text-xs text-gray-700"> Due </label>
+                  <input
+                    v-model="form.due_date"
+                    @focus="errors.due_date = null"
+                    id="due"
+                    name="name"
+                    type="datetime-local"
                     class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
-                  >
-                    <quill-editor
-                      ref="editor"
-                      @focus="errors.description = null"
-                      v-model:content="form.description"
-                      content-type="html"
-                      theme="snow"
-                      placeholder="Type task description..."
-                      rows="8"
-                      :toolbar="toolbar"
-                    ></quill-editor>
-                  </div>
-                  <error-message
-                    :errors="errors.description"
-                    @remove-error="errors.description = null"
-                  />
-                </div>
-                <div class="grid grid-cols-2 mb-2 gap-2">
-                  <div class="col-span-1 tooltip">
-                    <label for="start" class="text-xs text-gray-700">
-                      Start
-                    </label>
-                    <input
-                      v-model="form.start_date"
-                      @focus="errors.start_date = null"
-                      id="start"
-                      name="name"
-                      type="datetime-local"
-                      format
-                      class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
-                      placeholder="Type task name..."
-                      :class="{
-                        'border-1 border-red-400': errors.start_date,
-                        'border-0': !errors.start_date,
-                      }"
-                    />
-                    <error-message
-                      :errors="errors.start_date"
-                      @remove-error="errors.start_date = null"
-                    />
-                  </div>
-                  <div class="col-span-1 tooltip">
-                    <label for="due" class="text-xs text-gray-700"> Due </label>
-                    <input
-                      v-model="form.due_date"
-                      @focus="errors.due_date = null"
-                      id="due"
-                      name="name"
-                      type="datetime-local"
-                      class="block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0"
-                      placeholder="Type task name..."
-                      :class="{
-                        'border-1 border-red-400': errors.due_date,
-                        'border-0': !errors.due_date,
-                      }"
-                    />
-                    <error-message
-                      :errors="errors.due_date"
-                      @remove-error="errors.due_date = null"
-                    />
-                  </div>
-                </div>
-                <div class="mb-2 tooltip">
-                  <label for="description" class="text-xs text-gray-700">
-                    Status
-                  </label>
-                  <div class="cst-radio text-xs rounded">
-                    <label
-                      class="radio orange cursor-pointer"
-                      v-for="status in statuses"
-                      :key="status.id"
-                    >
-                      <input
-                        v-model="form.status_id"
-                        @change="errors.status_id = null"
-                        type="radio"
-                        :value="status.id"
-                        class="hidden"
-                      />
-                      <span class="mb-1">
-                        {{ status.name }}
-                      </span>
-                    </label>
-                  </div>
-                  <error-message
-                    :errors="errors.status_id"
-                    @remove-error="errors.status_id = null"
-                  />
-                </div>
-                <div class="mb-2 text-sm" v-if="form.task_id == 0">
-                  <button
-                    :disabled="form.is_processing"
-                    @click="storeTask()"
-                    class="block bg-white rounded shadow-sm p-2 w-full hover:bg-gray-50 active:bg-gray-100"
+                    placeholder="Type task name..."
                     :class="{
-                      'cursor-wait': form.is_processing,
+                      'border-1 border-red-400': errors.due_date,
+                      'border-0': !errors.due_date,
                     }"
-                  >
-                    {{ form.is_processing ? "Processing" : "Submit" }}
-                  </button>
-                </div>
-                <div class="mb-2 flex justify-between text-sm" v-else>
-                  <button
-                    @click="deleteTask(form.task_id)"
-                    class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 mr-1"
-                  >
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                  <button
-                    :disabled="form.is_processing"
-                    @click="updateTask()"
-                    class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 block w-40"
-                    style="width: 10rem"
-                    :class="{
-                      'cursor-wait': form.is_processing,
-                    }"
-                  >
-                    {{ form.is_processing ? "Processing" : "Save" }}
-                  </button>
+                  />
+                  <error-message
+                    :errors="errors.due_date"
+                    @remove-error="errors.due_date = null"
+                  />
                 </div>
               </div>
+              <div class="mb-2 tooltip">
+                <label for="description" class="text-xs text-gray-700">
+                  Status
+                </label>
+                <div class="cst-radio text-xs rounded">
+                  <label
+                    class="radio orange cursor-pointer"
+                    v-for="status in statuses"
+                    :key="status.id"
+                  >
+                    <input
+                      v-model="form.status_id"
+                      @change="errors.status_id = null"
+                      type="radio"
+                      :value="status.id"
+                      class="hidden"
+                    />
+                    <span class="mb-1">
+                      {{ status.name }}
+                    </span>
+                  </label>
+                </div>
+                <error-message
+                  :errors="errors.status_id"
+                  @remove-error="errors.status_id = null"
+                />
+              </div>
+              <div class="mb-2 text-sm" v-if="form.task_id == 0">
+                <button
+                  :disabled="form.is_processing"
+                  @click="storeTask()"
+                  class="block bg-white rounded shadow-sm p-2 w-full hover:bg-gray-50 active:bg-gray-100"
+                  :class="{
+                    'cursor-wait': form.is_processing,
+                  }"
+                >
+                  {{ form.is_processing ? "Processing" : "Submit" }}
+                </button>
+              </div>
+              <div class="mb-2 flex justify-between text-sm" v-else>
+                <button
+                  @click="deleteTask(form.task_id)"
+                  class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 mr-1"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+                <button
+                  :disabled="form.is_processing"
+                  @click="updateTask()"
+                  class="bg-white rounded shadow-sm p-2 hover:bg-gray-50 active:bg-gray-100 block w-40"
+                  style="width: 10rem"
+                  :class="{
+                    'cursor-wait': form.is_processing,
+                  }"
+                >
+                  {{ form.is_processing ? "Processing" : "Save" }}
+                </button>
+              </div>
             </div>
-            <div
-              class="col-span-4 md:col-span-2 bg-gray-100 p-2 rounded-md border-0"
-            >
+          </div>
+        </cust-off-canvas>
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="col-span-3 bg-gray-100 p-2 rounded-md border-0">
               <div class="flex justify-between mx-2 gap-2">
                 <h5 class="font-semibold text-lg text-center whitespace-nowrap">
                   Task Lists
@@ -283,7 +272,7 @@
                     </option>
                   </select>
                   <select
-                    class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12"
+                    class="text-xs form-select appearance-none block px-1 py-1 text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none pr-12 block md:hidden"
                     v-model="project_id"
                   >
                     <option class="text-xs" value="All" selected>
@@ -337,164 +326,194 @@
                 </div>
               </div>
               <div
-                class="overflow-y-auto bg-gray-50 rounded-2xl p-2"
+                class="overflow-y-auto bg-gray-50 rounded-2xl p-2 grid grid-cols-4"
                 style="height: 36rem"
               >
-                <transition name="switch" mode="out-in">
-                  <div
-                    v-if="fetching"
-                    class="h-full w-full flex items-center justify-center"
-                  >
-                    <jet-loading-circle-dots class="w-20 h-20" />
-                  </div>
-                  <div class="h-full p-2" v-else>
-                    <transition name="switch" mode="out-in">
-                      <transition-group
-                        tag="ul"
-                        name="list"
-                        class="text-xs"
-                        v-if="filteredTasks.length > 0"
-                        appear
+                <div class="col-span-1 hidden md:block">
+                  <ul class="bg-gray-100 p-3 rounded-l-2xl h-full">
+                    <li
+                      class="rounded mb-1 p-1 stroke-white stroke-1 border-l-2 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer hover:rounded-l-xl"
+                      @click="project_id = 'All'"
+                      :class="{
+                        'rounded-l-xl pl-4 border-l-green-500': project_id == 'All',
+                      }"
+                    >
+                      All
+                    </li>
+                    <li
+                      v-for="project in projects"
+                      :key="project.id"
+                      :value="project.id"
+                      class="rounded mb-1 p-1 stroke-white stroke-1 border-l-2 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer hover:rounded-l-xl"
+                      @click="project_id = project.id"
+                      :class="{
+                        'rounded-l-xl pl-4 border-l-green-500': project_id == project.id,
+                      }"
+                    >
+                      {{ project.name }}
+                      <span v-if="project.tasks.length > 0"
+                        >({{ project.tasks.length }})</span
                       >
-                        <li
-                          v-for="(task, index) in filteredTasks"
-                          :key="task.id"
-                          class="grid grid-cols-4 gap-2 gap-y-5"
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-span-3 pl-2">
+                  <transition name="switch" mode="out-in">
+                    <div
+                      v-if="fetching"
+                      class="h-full w-full flex items-center justify-center"
+                    >
+                      <jet-loading-circle-dots class="w-20 h-20" />
+                    </div>
+                    <div class="h-full p-2" v-else>
+                      <transition name="switch" mode="out-in">
+                        <transition-group
+                          tag="ul"
+                          name="list"
+                          class="text-xs"
+                          v-if="filteredTasks.length > 0"
+                          appear
                         >
-                          <div class="col-span-4 md:col-span-3 group">
-                            <div
-                              class="relative bg-white rounded-md p-2 px-4 mb-1 transition-all ease-in-out duration-300 task-list group-hover:shadow-md"
-                              :class="{
-                                'bg-gray-100': form.task_id === task.id,
-                                'shadow-md -translate-y-1': task.swapping,
-                                'cursor-grab active:cursor-grabbing task-sort':
-                                  sortable,
-                              }"
-                              style="border-right: 0.25rem solid"
-                              :style="{
-                                'border-right-color': task.status.color,
-                              }"
-                              :draggable="sortable"
-                              @dragstart="dragStart(task, index, $event)"
-                              @dragover="dragOver(task, index)"
-                              @dragenter="dragEnter(task, index)"
-                              @dragleave="dragLeave(task, index)"
-                              @drop="dragDrop(task, index)"
-                              @dragover.prevent
-                              @dragenter.prevent
-                              :data-index="index"
-                              :data-id="task.id"
-                            >
-                              <button
-                                v-if="form.task_id === task.id"
-                                @click="cancelEdit(task.id)"
-                                class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                          <li
+                            v-for="(task, index) in filteredTasks"
+                            :key="task.id"
+                            class="grid grid-cols-4 gap-2 gap-y-5"
+                          >
+                            <div class="col-span-4 md:col-span-3 group">
+                              <div
+                                class="relative bg-white rounded-md p-2 px-4 mb-1 transition-all ease-in-out duration-300 task-list group-hover:shadow-md"
+                                :class="{
+                                  'bg-gray-100': form.task_id === task.id,
+                                  'shadow-md -translate-y-1': task.swapping,
+                                  'cursor-grab active:cursor-grabbing task-sort':
+                                    sortable,
+                                }"
+                                style="border-right: 0.25rem solid"
+                                :style="{
+                                  'border-right-color': task.status.color,
+                                }"
+                                :draggable="sortable"
+                                @dragstart="dragStart(task, index, $event)"
+                                @dragover="dragOver(task, index)"
+                                @dragenter="dragEnter(task, index)"
+                                @dragleave="dragLeave(task, index)"
+                                @drop="dragDrop(task, index)"
+                                @dragover.prevent
+                                @dragenter.prevent
+                                :data-index="index"
+                                :data-id="task.id"
                               >
-                                <i class="fa-solid fa-xmark"></i>
-                              </button>
-                              <button
-                                v-else
-                                @click="editTask(task.id)"
-                                class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
-                              >
-                                <i class="fa-solid fa-pencil"></i>
-                              </button>
-                              <div class="flex gap-1 justify-between mb-1">
-                                <div class="flex items-center">
-                                  {{ task.name }}
-                                </div>
-                                <div class="flex gap-1">
-                                  <div
-                                    class="p-1 rounded text-xs border text-xs flex items-center gap-2"
-                                  >
-                                    <input
-                                      :ref="`color_${task.status.id}_${index}`"
-                                      type="color"
-                                      id="favcolor"
-                                      class="w-4 h-4 rounded color-input"
-                                      name="favcolor"
-                                      :value="task.status.color"
-                                      @change="
-                                        updateStatusColor(
-                                          `color_${task.status.id}_${index}`
-                                        )
-                                      "
-                                      @input="
-                                        liveUpdateDomStatusColor(
-                                          `color_${task.status.id}_${index}`
-                                        )
-                                      "
-                                    />
-                                    {{ task.status.name }}
+                                <button
+                                  v-if="form.task_id === task.id"
+                                  @click="cancelEdit(task.id)"
+                                  class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                                >
+                                  <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <button
+                                  v-else
+                                  @click="editTask(task.id)"
+                                  class="absolute -top-2 -left-2 p-1 rounded-full bg-gray-100 shadow w-6 h-6 flex justify-center items-center"
+                                >
+                                  <i class="fa-solid fa-pencil"></i>
+                                </button>
+                                <div class="flex gap-1 justify-between mb-1">
+                                  <div class="flex items-center">
+                                    {{ task.name }}
                                   </div>
+                                  <div class="flex gap-1">
+                                    <div
+                                      class="p-1 rounded text-xs border text-xs flex items-center gap-2"
+                                    >
+                                      <input
+                                        :ref="`color_${task.status.id}_${index}`"
+                                        type="color"
+                                        id="favcolor"
+                                        class="w-4 h-4 rounded color-input"
+                                        name="favcolor"
+                                        :value="task.status.color"
+                                        @change="
+                                          updateStatusColor(
+                                            `color_${task.status.id}_${index}`
+                                          )
+                                        "
+                                        @input="
+                                          liveUpdateDomStatusColor(
+                                            `color_${task.status.id}_${index}`
+                                          )
+                                        "
+                                      />
+                                      {{ task.status.name }}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div
+                                  class="bg-gray-50 rounded-lg ql-snow relative group"
+                                >
+                                  <button
+                                    @click="copy(task)"
+                                    class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100"
+                                  >
+                                    <i class="fa-solid fa-clone"></i>
+                                  </button>
+                                  <div
+                                    class="ql-editor"
+                                    :id="`description-${task.id}`"
+                                    v-html="task.description"
+                                  ></div>
                                 </div>
                               </div>
                               <div
-                                class="bg-gray-50 rounded-lg ql-snow relative group"
+                                class="flex justify-end opacity-0 group-hover:opacity-100 transition-all ease-in-out duration-300 mb-4"
                               >
                                 <button
-                                  @click="copy(task)"
-                                  class="transition-all ease-in-out duration-300 absolute top-2 right-2 bg-white rounded border p-1 opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-100"
+                                  class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
                                 >
-                                  <i class="fa-solid fa-clone"></i>
+                                  <i class="fa-solid fa-thumbtack"></i> pin
                                 </button>
-                                <div
-                                  class="ql-editor"
-                                  :id="`description-${task.id}`"
-                                  v-html="task.description"
-                                ></div>
+                                <button
+                                  class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
+                                >
+                                  <i class="fa-solid fa-face-smile"></i> react
+                                </button>
+                                <button
+                                  class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-5 z-10"
+                                >
+                                  <i class="fa-solid fa-reply"></i> reply
+                                </button>
                               </div>
                             </div>
-                            <div
-                              class="flex justify-end opacity-0 group-hover:opacity-100 transition-all ease-in-out duration-300 mb-4"
-                            >
-                              <button
-                                class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
-                              >
-                                <i class="fa-solid fa-thumbtack"></i> pin
-                              </button>
-                              <button
-                                class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
-                              >
-                                <i class="fa-solid fa-face-smile"></i> react
-                              </button>
-                              <button
-                                class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-5 z-10"
-                              >
-                                <i class="fa-solid fa-reply"></i> reply
-                              </button>
-                            </div>
-                          </div>
-                          <div class="text-xs hidden md:block">
-                            <div>
-                              <div class="font-semibold">
-                                {{ task.pic.name }}
-                              </div>
-                              <div class="font-thin">
-                                {{ task.project.name }}
-                              </div>
-                              <!-- <div class="font-thin text-gray-500">
+                            <div class="text-xs hidden md:block">
+                              <div>
+                                <div class="font-semibold">
+                                  {{ task.pic.name }}
+                                </div>
+                                <div class="font-thin">
+                                  {{ task.project.name }}
+                                </div>
+                                <!-- <div class="font-thin text-gray-500">
                               {{ task.due_date_date }}
                             </div>
                             <div class="font-thin text-gray-500">
                               {{ task.due_date_hour }}
                             </div> -->
-                              <div class="font-thin text-gray-500">
-                                {{ task.due_left }}
+                                <div class="font-thin text-gray-500">
+                                  {{ task.due_left }}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </li>
-                      </transition-group>
-                      <div
-                        class="h-full flex justify-center items-center"
-                        v-else
-                      >
-                        No Data
-                      </div>
-                    </transition>
-                  </div>
-                </transition>
+                          </li>
+                        </transition-group>
+                        <div
+                          class="h-full flex justify-center items-center"
+                          v-else
+                        >
+                          No Data
+                        </div>
+                      </transition>
+                    </div>
+                  </transition>
+                </div>
               </div>
             </div>
           </div>
@@ -511,6 +530,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
 import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
 import Toast from "@/Jetstream/Toast.vue";
+import CustOffCanvas from "@/Jetstream/CustOffCanvas";
 
 export default defineComponent({
   components: {
@@ -518,6 +538,7 @@ export default defineComponent({
     JetLoadingCircleDots,
     ErrorMessage,
     Toast,
+    CustOffCanvas,
   },
   props: {
     task_statuses: Array,
@@ -676,7 +697,9 @@ export default defineComponent({
       this.resetForm();
     },
 
-    editTask(task_id) {
+    async editTask(task_id) {
+      this.$refs.openCanvas.click();
+      await new Promise((r) => setTimeout(r, 300));
       const taskIndex = this.tasks.findIndex((task) => task.id === task_id);
       this.showCreateEdit = true;
       this.fillForm(this.tasks[taskIndex]);
@@ -748,12 +771,15 @@ export default defineComponent({
       this.form.project_id = task.project_id;
       this.form.start_date = task.start_date;
       this.form.due_date = task.due_date;
-
       this.$refs.editor.setHTML(task.description);
     },
 
     resetForm() {
       this.resetErrors();
+      if (this.form.task_id != 0) {
+        this.$refs.editor.setHTML("");
+        this.$refs.closeCanvas.click();
+      }
       this.form.task_id = 0;
       this.form.name = null;
       this.form.description = null;
@@ -761,8 +787,6 @@ export default defineComponent({
       this.form.project_id = null;
       this.form.start_date = null;
       this.form.due_date = null;
-
-      this.$refs.editor.setHTML("");
     },
 
     dragStart(item, index, e) {
@@ -913,7 +937,7 @@ export default defineComponent({
   },
   mounted() {
     this.getTasks();
-    this.$refs.name.focus();
+    // this.$refs.name.focus();
   },
 });
 </script>

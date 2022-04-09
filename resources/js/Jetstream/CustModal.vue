@@ -8,12 +8,13 @@
         v-if="showModal"
         class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center pt-40 flex w-100"
       >
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style="width: 100%">
-          <!--content-->
+        <div
+          class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          style="width: 100%"
+        >
           <div
             class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none"
           >
-            <!--header-->
             <div
               class="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t"
             >
@@ -41,7 +42,7 @@
         </div>
       </div>
     </transition-group>
-    <div v-if="showModal" class="opacity-25 fixed inset-0 z-40 bg-black"></div>
+    <div v-if="showModal" class="opacity-50 fixed inset-0 z-40 bg-black"></div>
   </div>
 </template>
 

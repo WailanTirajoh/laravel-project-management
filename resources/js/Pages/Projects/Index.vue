@@ -121,7 +121,6 @@ export default defineComponent({
   data() {
     return {
       projects: [],
-      show_modal: false,
       form: {
         is_processing: false,
         project_id: null,

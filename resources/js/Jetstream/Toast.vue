@@ -1,6 +1,6 @@
 <template>
   <transition name="toast">
-    <div class="fixed top-10 left-1/2" v-if="isShown">
+    <div class="fixed top-10 left-1/2 z-50" v-if="isShown">
       <div
         class="p-3 text-white rounded-3xl px-5 shadow bg-opacity-95"
         :class="classType"
