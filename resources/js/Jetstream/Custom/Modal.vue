@@ -42,7 +42,17 @@
         </div>
       </div>
     </transition-group>
-    <div v-if="showModal" class="opacity-50 fixed inset-0 z-40 bg-black"></div>
+    <transition
+      enter-active-class="ease-out duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="ease-in duration-200"
+      leave-from-class="opacity-25"
+      leave-to-class="opacity-0"
+      appear
+    >
+      <div v-if="showModal" class="fixed inset-0 z-40 bg-black opacity-25 transition-all"></div>
+    </transition>
   </div>
 </template>
 

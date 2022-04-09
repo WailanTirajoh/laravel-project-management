@@ -318,10 +318,17 @@
                     :value="thestatus.id"
                   />
                   <label
-                    class="form-check-label border rounded p-1 inline-block text-gray-800 block w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white whitespace-nowrap"
+                    class="form-check-label border rounded inline-block text-gray-800 flex justify-between w-full rounded text-gray-600 text-xs focus:border-transparent focus:ring-0 cursor-pointer bg-white whitespace-nowrap"
                     :for="`status-check-${thestatus.id}`"
                   >
-                    {{ thestatus.name }} {{ totalStatus(thestatus.id) }}
+                    <div class="p-1">
+                      {{ thestatus.name }}
+                    </div>
+                    <span
+                      class="bg-gray-200 p-1 flex items-center justify-center"
+                    >
+                      {{ totalStatus(thestatus.id) }}
+                    </span>
                   </label>
                 </div>
               </div>
@@ -332,11 +339,10 @@
                 <div class="col-span-1 hidden md:block">
                   <ul class="bg-gray-100 p-3 rounded-l-2xl h-full">
                     <li
-                      class="rounded mb-1 p-1 stroke-white stroke-1 border-l-2 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer hover:rounded-l-xl"
+                      class="rounded mb-1 p-1 stroke-white stroke-1 border-l-4 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer"
                       @click="project_id = 'All'"
                       :class="{
-                        'rounded-l-xl pl-4 border-l-green-500':
-                          project_id == 'All',
+                        'pl-4 border-l-green-500': project_id == 'All',
                       }"
                     >
                       All
@@ -345,11 +351,10 @@
                       v-for="project in projects"
                       :key="project.id"
                       :value="project.id"
-                      class="rounded mb-1 p-1 stroke-white stroke-1 border-l-2 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer hover:rounded-l-xl"
+                      class="rounded mb-1 p-1 stroke-white stroke-1 border-l-4 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer"
                       @click="project_id = project.id"
                       :class="{
-                        'rounded-l-xl pl-4 border-l-green-500':
-                          project_id == project.id,
+                        'pl-4 border-l-green-500': project_id == project.id,
                       }"
                     >
                       {{ project.name }}
@@ -471,17 +476,18 @@
                                 <button
                                   class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
                                 >
-                                  <i class="fa-solid fa-thumbtack"></i> pin
+                                  <i class="fa-solid fa-thumbtack"></i>
                                 </button>
                                 <button
                                   class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-2 z-10"
                                 >
-                                  <i class="fa-solid fa-face-smile"></i> react
+                                  <i class="fa-solid fa-face-smile"></i>
                                 </button>
                                 <button
+                                  @click="comment.show = !comment.show"
                                   class="transition-all ease-in-out duration-300 bg-white rounded-2xl border-2 border-l-pink-700 p-1 px-3 group-hover:shadow-md hover:scale-110 hover:shadow-lg active:scale-100 mr-5 z-10"
                                 >
-                                  <i class="fa-solid fa-reply"></i> reply
+                                  <i class="fa-solid fa-reply"></i>
                                 </button>
                               </div>
                             </div>
@@ -522,13 +528,20 @@
         </div>
       </div>
     </div>
+    <reply :show="comment.show" @close-reply="comment.show = false">
+      <div class="p-4">testing 123</div>
+    </reply>
   </app-layout>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import Reply from "@/Jetstream/Custom/Reply";
 
 export default defineComponent({
+  components: {
+    Reply,
+  },
   props: {
     task_statuses: Array,
     projects: Array,
@@ -572,6 +585,9 @@ export default defineComponent({
         type: ["Asc", "Desc"],
       },
       statuses: this.task_statuses,
+      comment: {
+        show: false,
+      },
     };
   },
   computed: {
@@ -927,7 +943,7 @@ export default defineComponent({
   border-bottom: 0.175rem solid pink;
   transition: all 300ms ease;
   height: 1.15rem;
-  width: 12.5rem;
+  width: 7.5rem;
   border-bottom-right-radius: 0.5rem;
 }
 

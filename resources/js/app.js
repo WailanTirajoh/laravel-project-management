@@ -4,13 +4,13 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 import { QuillEditor } from '@vueup/vue-quill'
+import { errorHandler } from "@/Utils/error.js";
 import Toast from "@/Jetstream/Toast.vue";
-import CustOffCanvas from "@/Jetstream/CustOffCanvas";
-import Modal from "@/Jetstream/CustModal";
+import CustOffCanvas from "@/Jetstream/Custom/OffCanvas";
+import Modal from "@/Jetstream/Custom/Modal";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
 import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
-import { errorHandler } from "@/Utils/error.js";
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 

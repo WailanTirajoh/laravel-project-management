@@ -66,7 +66,7 @@
             v-if="projects.length > 0"
           >
             <li
-              class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 col-span-4 sm:col-span-2 lg:col-span-1 ease-linear transition-all duration-150"
+              class="bg-white overflow-hidden shadow-xl sm:rounded-lg py-4 px-2 col-span-4 sm:col-span-2 lg:col-span-1 ease-linear transition-all duration-150"
               v-for="project in projects"
               :key="project.id"
             >
@@ -143,10 +143,12 @@ export default defineComponent({
         if (status === 200) {
           this.projects.push(data.project);
           this.resetForm();
+          this.showToast({ message: data.message, type: "success" });
           this.$refs.modal.toggleModal();
         }
       } catch (e) {
         if (e.response && e.response.data && e.response.data.errors) {
+          this.showToast({ message: e.response.data.message, type: "error" });
           return (this.errors = e.response.data.errors);
         }
         errorHandler(e);

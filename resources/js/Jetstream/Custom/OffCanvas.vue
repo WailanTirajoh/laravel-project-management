@@ -6,7 +6,7 @@
     <transition-group name="slide-fade">
       <div
         v-if="showModal"
-        class="fixed bottom-0 left-0 z-50 flex flex-col max-w-full bg-white bg-clip-padding transition-all duration-300 ease-in-out h-full shadow-2xl"
+        class="fixed bottom-0 left-0 z-40 flex flex-col max-w-full bg-white bg-clip-padding transition-all duration-300 ease-in-out h-full shadow-2xl"
         style="width: 400px"
       >
         <div
@@ -27,11 +27,21 @@
         </div>
       </div>
     </transition-group>
-    <div
-      v-if="showModal"
-      class="opacity-50 fixed inset-0 z-40 bg-black backdrop-blur"
-      @click="closeOffCanvas()"
-    ></div>
+    <transition
+      enter-active-class="ease-in-out duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="ease-in-out duration-300"
+      leave-from-class="opacity-25"
+      leave-to-class="opacity-0"
+      appear=""
+    >
+      <div
+        v-if="showModal"
+        class="fixed inset-0 z-30 bg-black transition-all ease-in-out opacity-25"
+        @click="closeOffCanvas()"
+      ></div>
+    </transition>
   </div>
 </template>
 

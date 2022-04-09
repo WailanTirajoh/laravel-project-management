@@ -7,8 +7,8 @@
     <div class="min-h-screen bg-gray-100">
       <nav class="bg-white border-b border-gray-100">
         <!-- Primary Navigation Menu -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex justify-between h-16">
+        <div class="px-6">
+          <div class="flex justify-between h-12">
             <div class="flex">
               <!-- Logo -->
               <div class="shrink-0 flex items-center">
@@ -16,30 +16,32 @@
                   <jet-application-mark class="block h-9 w-auto" />
                 </Link>
               </div>
+            </div>
 
-              <!-- Navigation Links -->
-              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+            <div class="flex">
+              <div class="hidden space-x-8 sm:-my-px sm:ml-5 sm:flex">
                 <jet-nav-link
                   :href="route('dashboard')"
                   :active="route().current('dashboard')"
                 >
-                  Dashboard
+                  <i class="fa-solid fa-house"></i>
                 </jet-nav-link>
               </div>
-              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+              <div class="hidden space-x-8 sm:-my-px sm:ml-5 sm:flex">
+                <!-- Navigation Links -->
                 <jet-nav-link
                   :href="route('view.projects.index')"
                   :active="route().current('view.projects.index')"
                 >
-                  My Projects
+                  <i class="fa-solid fa-diagram-project"></i>
                 </jet-nav-link>
               </div>
-              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+              <div class="hidden space-x-8 sm:-my-px sm:ml-5 sm:flex">
                 <jet-nav-link
                   :href="route('view.tasks.index')"
                   :active="route().current('view.tasks.index')"
                 >
-                  My Task
+                  <i class="fa-solid fa-list-check"></i>
                 </jet-nav-link>
               </div>
             </div>
@@ -47,6 +49,22 @@
             <div class="hidden sm:flex sm:items-center sm:ml-6">
               <div class="ml-3 relative">
                 <!-- Teams Dropdown -->
+
+                <jet-dropdown align="right" width="60">
+                  <template #trigger>
+                    <div
+                      class="text-gray-500 bg-gray-100 h-8 w-8 rounded-full flex justify-center items-center"
+                    >
+                      <i class="fa-solid fa-bell"></i>
+                    </div>
+                  </template>
+
+                  <template #content>
+                    <div class="block px-4 py-2 text-xs text-gray-400">
+                      Notification (OTW)
+                    </div>
+                  </template>
+                </jet-dropdown>
                 <jet-dropdown
                   align="right"
                   width="60"
