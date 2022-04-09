@@ -19,6 +19,8 @@ class ApiTaskController extends Controller
         return TaskResource::collection(Task::when($request->project_id, function ($query) use ($request) {
             if ($request->project_id !== 'All') {
                 $query->where('project_id', $request->project_id);
+            } else {
+                $query->whereIn('project_id', Auth::user()->projects->pluck('id')->toArray());
             }
         })->get());
     }

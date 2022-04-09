@@ -57,45 +57,48 @@
             </button>
           </template>
         </modal>
-        <transition-group
-          tag="ul"
-          name="list"
-          class="grid grid-cols-4 gap-4"
-          appear
-          v-if="projects.length > 0"
-        >
-          <li
-            class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 col-span-4 sm:col-span-2 lg:col-span-1 ease-linear transition-all duration-150"
-            v-for="project in projects"
-            :key="project.id"
+        <div v-if="projects">
+          <transition-group
+            tag="ul"
+            name="list"
+            class="grid grid-cols-4 gap-4"
+            appear
+            v-if="projects.length > 0"
           >
-            <div class="text-center text-xl">
-              <h5>
-                {{ project.name }}
-              </h5>
-            </div>
-            <hr class="mt-2 mb-2" />
-            <div
-              class=""
-              v-for="status in project.status"
-              :key="status.detail.id"
+            <li
+              class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4 col-span-4 sm:col-span-2 lg:col-span-1 ease-linear transition-all duration-150"
+              v-for="project in projects"
+              :key="project.id"
             >
+              <div class="text-center text-xl">
+                <h5>
+                  {{ project.name }}
+                </h5>
+              </div>
+              <hr class="mt-2 mb-2" />
               <div
-                class="grid grid-cols-2 rounded mb-1 p-1 stroke-white stroke-1 border-l-2 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg"
-                :style="{
-                  'border-color': status.detail.color,
-                }"
+                class=""
+                v-for="status in project.status"
+                :key="status.detail.id"
               >
-                <div>
-                  {{ status.detail.name }}
-                </div>
-                <div class="text-right pr-4">
-                  {{ status.val }}
+                <div
+                  class="grid grid-cols-2 rounded mb-1 p-1 stroke-white stroke-1 border-l-2 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg"
+                  :style="{
+                    'border-color': status.detail.color,
+                  }"
+                >
+                  <div>
+                    {{ status.detail.name }}
+                  </div>
+                  <div class="text-right pr-4">
+                    {{ status.val }}
+                  </div>
                 </div>
               </div>
-            </div>
-          </li>
-        </transition-group>
+            </li>
+          </transition-group>
+          <div v-else>No Project</div>
+        </div>
         <div class="flex justify-center items-center h-64" v-else>
           <jet-loading-circle-dots />
         </div>
@@ -110,7 +113,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   data() {
     return {
-      projects: [],
+      projects: null,
       form: {
         is_processing: false,
         project_id: null,

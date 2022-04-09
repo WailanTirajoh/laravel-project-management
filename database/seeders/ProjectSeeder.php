@@ -20,10 +20,12 @@ class ProjectSeeder extends Seeder
         ];
 
         foreach ($projects as $project) {
-            Project::create([
+            $project = Project::create([
                 'created_by' => 1,
                 'name' => $project,
             ]);
+
+            $project->users()->attach(1);
         }
     }
 }

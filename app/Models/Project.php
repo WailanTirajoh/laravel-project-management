@@ -30,4 +30,14 @@ class Project extends Model
     {
         return $this->hasMany(TaskStatus::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

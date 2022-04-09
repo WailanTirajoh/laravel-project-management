@@ -74,8 +74,13 @@ class User extends Authenticatable
         return $this->hasMany(Chat::class, 'user_id');
     }
 
-    public function projects(): HasMany
+    public function projects()
     {
-        return $this->hasMany(Project::class, 'user_id');
+        return $this->belongsToMany(Project::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasManyThrough(Task::class, Project::class);
     }
 }

@@ -14,10 +14,8 @@ class ApiProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('tasks')->get();
-
         return response()->json([
-            'projects' => ProjectResource::collection($projects)
+            'projects' => ProjectResource::collection(Auth::user()->projects)
         ]);
     }
 
@@ -30,6 +28,8 @@ class ApiProjectController extends Controller
                 'name' => $request->name,
                 'created_by' => Auth::user()->id,
             ]);
+
+            $project->users()->attach(Auth::user()->id);
 
             DB::commit();
 

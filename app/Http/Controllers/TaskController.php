@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\TaskStatus;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class TaskController extends Controller
@@ -12,8 +14,8 @@ class TaskController extends Controller
     {
         return Inertia::render('Tasks.Index', [
             'task_statuses' => TaskStatus::select('id', 'name', 'color')->get(),
-            'projects' => Project::select('id', 'name')->with(['tasks' => function ($task) {
-                $task->select('id', 'name', 'description', 'project_id');
+            'projects' => Auth::user()->projects()->select('projects.id', 'name')->with(['tasks' => function ($task) {
+                $task->select((new Task())->getTable() . '.id', 'name', 'description', 'project_id');
             }])
                 ->withCount('tasks')
                 ->orderByDesc('tasks_count')
