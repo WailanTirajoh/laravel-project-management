@@ -1,5 +1,6 @@
 <template>
   <app-layout title="Projects">
+    <toast :message="toast.message" :is-shown="toast.show" :type="toast.type" />
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         My Projects
@@ -16,7 +17,7 @@
               Create New Project
             </button>
           </template>
-          <template #header> Add Project </template>
+          <template #header> Create New Project </template>
           <template #body>
             <div class="">
               <input type="hidden" v-model="form.project_id" />
@@ -105,19 +106,8 @@
 
 <script>
 import { defineComponent } from "vue";
-import { errorHandler } from "@/Utils/error.js";
-import AppLayout from "@/Layouts/AppLayout.vue";
-import Modal from "@/Jetstream/CustModal";
-import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
-import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
 
 export default defineComponent({
-  components: {
-    AppLayout,
-    Modal,
-    ErrorMessage,
-    JetLoadingCircleDots,
-  },
   data() {
     return {
       projects: [],

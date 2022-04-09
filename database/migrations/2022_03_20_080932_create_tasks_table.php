@@ -29,16 +29,18 @@ return new class extends Migration
             $table->string('name');
             $table->longText('description');
             $table->longText('notes')->nullable();
+            $table->integer('sort')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('due_date')->nullable();
             $table->timestamp('finish_date')->nullable();
-            $table->integer('sort')->nullable();
             $table->timestamps();
+            $table->timestamp('pinned_at')->nullable();
             $table->softDeletes();
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->unsignedBigInteger('pinned_by')->nullable();
         });
     }
 

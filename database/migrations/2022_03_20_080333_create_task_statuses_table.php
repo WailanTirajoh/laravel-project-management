@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('project_task_statuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id');
             $table->string('name');
             $table->string('color');
             $table->string('description')->nullable();

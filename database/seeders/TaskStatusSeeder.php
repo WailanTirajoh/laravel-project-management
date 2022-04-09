@@ -25,10 +25,6 @@ class TaskStatusSeeder extends Seeder
                 'color' => '#fff200'
             ],
             [
-                'name' => 'Done',
-                'color' => '#00b050'
-            ],
-            [
                 'name' => 'On Hold',
                 'color' => '#fe4611'
             ],
@@ -36,11 +32,14 @@ class TaskStatusSeeder extends Seeder
                 'name' => 'Cancel',
                 'color' => '#0c1427'
             ],
+            [
+                'name' => 'Done',
+                'color' => '#00b050'
+            ],
         ];
 
         foreach ($statuses as $status) {
             $status['created_by'] = 1;
-            $status['project_id'] = 1;
             TaskStatus::create($status);
         }
     }

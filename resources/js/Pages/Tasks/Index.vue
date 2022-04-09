@@ -335,7 +335,8 @@
                       class="rounded mb-1 p-1 stroke-white stroke-1 border-l-2 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer hover:rounded-l-xl"
                       @click="project_id = 'All'"
                       :class="{
-                        'rounded-l-xl pl-4 border-l-green-500': project_id == 'All',
+                        'rounded-l-xl pl-4 border-l-green-500':
+                          project_id == 'All',
                       }"
                     >
                       All
@@ -347,7 +348,8 @@
                       class="rounded mb-1 p-1 stroke-white stroke-1 border-l-2 hover:border-l-green-500 shadow ease-linear transition-all duration-150 pl-2 hover:pl-4 hover:shadow-lg bg-white cursor-pointer hover:rounded-l-xl"
                       @click="project_id = project.id"
                       :class="{
-                        'rounded-l-xl pl-4 border-l-green-500': project_id == project.id,
+                        'rounded-l-xl pl-4 border-l-green-500':
+                          project_id == project.id,
                       }"
                     >
                       {{ project.name }}
@@ -525,40 +527,14 @@
 
 <script>
 import { defineComponent } from "vue";
-import { errorHandler } from "@/Utils/error.js";
-import AppLayout from "@/Layouts/AppLayout.vue";
-import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
-import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
-import Toast from "@/Jetstream/Toast.vue";
-import CustOffCanvas from "@/Jetstream/CustOffCanvas";
 
 export default defineComponent({
-  components: {
-    AppLayout,
-    JetLoadingCircleDots,
-    ErrorMessage,
-    Toast,
-    CustOffCanvas,
-  },
   props: {
     task_statuses: Array,
     projects: Array,
   },
   data() {
     return {
-      toolbar: [
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        [{ font: [] }],
-        ["bold", "italic", "underline", "strike"], // toggled buttons
-        ["blockquote", "code-block"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ script: "sub" }, { script: "super" }], // superscript/subscript
-        [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-        [{ direction: "rtl" }], // text direction
-        [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-        [{ align: [] }],
-        ["clean"],
-      ],
       form: {
         is_processing: false,
         task_id: 0,
@@ -595,13 +571,7 @@ export default defineComponent({
         fillable: ["Date", "Priority"],
         type: ["Asc", "Desc"],
       },
-      toast: {
-        show: false,
-        message: "",
-        type: "error",
-      },
       statuses: this.task_statuses,
-      showCreateEdit: false,
     };
   },
   computed: {
@@ -701,7 +671,6 @@ export default defineComponent({
       this.$refs.openCanvas.click();
       await new Promise((r) => setTimeout(r, 300));
       const taskIndex = this.tasks.findIndex((task) => task.id === task_id);
-      this.showCreateEdit = true;
       this.fillForm(this.tasks[taskIndex]);
       this.$refs.name.focus();
     },
@@ -716,7 +685,6 @@ export default defineComponent({
           this.tasks.push(task);
 
           this.resetForm();
-          this.showCreateEdit = false;
           this.showToast({ message: data.message, type: "success" });
         }
       } catch (e) {
@@ -747,7 +715,6 @@ export default defineComponent({
           this.tasks[taskIndex] = task;
 
           this.resetForm();
-          this.showCreateEdit = false;
           this.showToast({ message: data.message, type: "success" });
         }
       } catch (e) {
@@ -913,26 +880,6 @@ export default defineComponent({
       s.removeAllRanges();
 
       this.showToast({ message: "Text copied", type: "success" });
-    },
-
-    showToast({ message, type }) {
-      this.toast.show = true;
-      this.toast.message = message;
-      this.toast.type = type;
-      this.hideToast();
-    },
-
-    async hideToast() {
-      await this.wait(2000);
-      this.toast.show = false;
-      this.toast.message = "";
-      this.toast.type = "success";
-    },
-
-    wait(timeout) {
-      return new Promise((resolve) => {
-        setTimeout(resolve, timeout);
-      });
     },
   },
   mounted() {

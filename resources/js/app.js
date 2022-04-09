@@ -3,10 +3,14 @@ require('./bootstrap');
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
-import VueSweetalert2 from 'vue-sweetalert2';
 import { QuillEditor } from '@vueup/vue-quill'
-// import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import 'sweetalert2/dist/sweetalert2.min.css';
+import Toast from "@/Jetstream/Toast.vue";
+import CustOffCanvas from "@/Jetstream/CustOffCanvas";
+import Modal from "@/Jetstream/CustModal";
+import AppLayout from "@/Layouts/AppLayout.vue";
+import JetLoadingCircleDots from "@/Jetstream/LoadingCircleDots.vue";
+import ErrorMessage from "@/Jetstream/ErrorMessage.vue";
+import { errorHandler } from "@/Utils/error.js";
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -17,10 +21,61 @@ createInertiaApp({
     return createApp({ render: () => h(app, props) })
       .use(plugin)
       .mixin({
-        methods: { route },
         components: {
-          QuillEditor
-        }
+          QuillEditor,
+          Toast,
+          CustOffCanvas,
+          ErrorMessage,
+          Modal,
+          AppLayout,
+          JetLoadingCircleDots
+        },
+        data() {
+          return {
+            toast: {
+              show: false,
+              message: "",
+              type: "error",
+            },
+            toolbar: [
+              [{ header: [1, 2, 3, 4, 5, 6, false] }],
+              [{ font: [] }],
+              ["bold", "italic", "underline", "strike"], // toggled buttons
+              ["blockquote", "code-block"],
+              [{ list: "ordered" }, { list: "bullet" }],
+              [{ script: "sub" }, { script: "super" }], // superscript/subscript
+              [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+              [{ direction: "rtl" }], // text direction
+              [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+              [{ align: [] }],
+              ["clean"],
+            ],
+          }
+        },
+        methods: {
+          route,
+
+          showToast({ message, type }) {
+            this.toast.show = true;
+            this.toast.message = message;
+            this.toast.type = type;
+            this.hideToast();
+          },
+
+          async hideToast() {
+            await this.wait(2000);
+            this.toast.show = false;
+            this.toast.message = "";
+            this.toast.type = "success";
+          },
+
+          wait(timeout) {
+            return new Promise((resolve) => {
+              setTimeout(resolve, timeout);
+            });
+          },
+          errorHandler
+        },
       })
       .mount(el)
   },
